@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>全球市場行情一覽</title>
+    <style>
+        :root {
+            --bg-color: #030712;
+            --card-bg: #0b1329;
+            --card-border: #1e293b;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --accent-green: #22c55e;
+            --accent-red: #ef4444;
+            --accent-yellow: #f59e0b;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 12px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .dashboard {
+            width: 100%;
+            max-width: 600px;
+            background: #060d1e;
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 16px;
+            box-sizing: border-box;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 10px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 1.6rem;
+            letter-spacing: 2px;
+            color: #ffffff;
+        }
+
+        .header .update-time {
+            font-size: 0.8rem;
+            color: var(--text-sub);
+            margin-top: 4px;
+        }
+
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 8px; }
+        .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 8px; }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .card-title { font-size: 0.85rem; color: var(--text-sub); text-align: center; margin-bottom: 4px; font-weight: bold; }
+        .card-price { font-size: 1.3rem; font-weight: 800; font-family: monospace; text-align: center; }
+        .card-change { font-size: 0.75rem; text-align: center; margin-top: 2px; font-weight: bold; }
+
+        .up { color: var(--accent-red); }
+        .down { color: var(--accent-green); }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2px;
+            font-size: 0.7rem;
+            color: var(--text-sub);
+            margin-top: 6px;
+            border-top: 1px dashed var(--card-border);
+            padding-top: 4px;
+        }
+        .details-grid div span { color: var(--text-main); font-weight: bold; }
+
+        .fear-box { text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .fear-score { font-size: 2.2rem; font-weight: 900; color: var(--accent-yellow); line-height: 1; margin: 6px 0; }
+        .fear-rating { font-size: 0.85rem; color: var(--text-sub); }
+
+        .footer {
+            margin-top: 12px;
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--text-sub);
+            border-top: 1px solid var(--card-border);
+            padding-top: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="dashboard">
+    <div class="header">
+        <h1>全球市場行情一覽</h1>
+        <div class="update-time" id="updateTime">資料讀取中...</div>
+    </div>
+
+    <!-- 上區：美股三大指數 -->
+    <div class="grid-3">
+        <div class="card">
+            <div class="card-title">道瓊指數</div>
+            <div class="card-price" id="dji-price">--</div>
+            <div class="card-change" id="dji-change">--</div>
+        </div>
+        <div class="card">
+            <div class="card-title">那斯達克</div>
+            <div class="card-price" id="ixic-price">--</div>
+            <div class="card-change" id="ixic-change">--</div>
+        </div>
+        <div class="card">
+            <div class="card-title">費城半導體</div>
+            <div class="card-price" id="sox-price">--</div>
+            <div class="card-change" id="sox-change">--</div>
+        </div>
+    </div>
+
+    <!-- 中區：台指期與匯率 -->
+    <div class="grid-2">
+        <div class="card">
+            <div class="card-title">台指期近全</div>
+            <div class="card-price" id="fitx-price">--</div>
+            <div class="card-change" id="fitx-change">--</div>
+        </div>
+        <div class="card">
+            <div class="card-title">台幣 (USD/TWD)</div>
+            <div class="card-price" id="usdtwd-price">--</div>
+            <div class="card-change" id="usdtwd-change">--</div>
+        </div>
+    </div>
+
+    <!-- 下區：VIX / 原油 / 恐懼指數 -->
+    <div class="grid-3">
+        <div class="card">
+            <div class="card-title">S&P500 VIX</div>
+            <div class="card-price" id="vix-price" style="font-size: 1.1rem;">--</div>
+            <div class="details-grid">
+                <div>開盤: <span id="vix-open">--</span></div>
+                <div>最高: <span id="vix-high">--</span></div>
+                <div>昨收: <span id="vix-prev">--</span></div>
+                <div>最低: <span id="vix-low">--</span></div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-title">布蘭特原油</div>
+            <div class="card-price" id="brent-price" style="font-size: 1.1rem;">--</div>
+            <div class="details-grid">
+                <div>開盤: <span id="brent-open">--</span></div>
+                <div>最高: <span id="brent-high">--</span></div>
+                <div>昨收: <span id="brent-prev">--</span></div>
+                <div>最低: <span id="brent-low">--</span></div>
+            </div>
+        </div>
+        <div class="card fear-box">
+            <div class="card-title">恐懼與貪婪指數</div>
+            <div class="fear-score" id="fear-score">--</div>
+            <div class="fear-rating" id="fear-rating">--</div>
+        </div>
+    </div>
+
+    <div class="footer">
+        長期投資 · 穩健理財 · 每日 06:00 自動更新
+    </div>
+</div>
+
+<script>
+    async function loadData() {
+        try {
+            const res = await fetch('data.json?t=' + Date.now());
+            const data = await res.json();
+
+            document.getElementById('updateTime').innerText = `更新時間：${data.updated_at}`;
+
+            const renderCard = (id, item) => {
+                if(!item) return;
+                const priceEl = document.getElementById(`${id}-price`);
+                const changeEl = document.getElementById(`${id}-change`);
+                const isUp = item.change > 0;
+                
+                priceEl.innerText = item.price;
+                priceEl.className = `card-price ${isUp ? 'up' : 'down'}`;
+
+                if(changeEl) {
+                    changeEl.innerText = `${isUp ? '▲' : '▼'} ${Math.abs(item.change)} (${item.pChange})`;
+                    changeEl.className = `card-change ${isUp ? 'up' : 'down'}`;
+                }
+            };
+
+            ['dji', 'ixic', 'sox', 'fitx', 'usdtwd'].forEach(k => renderCard(k, data[k]));
+
+            // Details
+            const renderDetails = (id, item) => {
+                if(!item) return;
+                document.getElementById(`${id}-price`).innerText = item.price;
+                document.getElementById(`${id}-open`).innerText = item.open;
+                document.getElementById(`${id}-high`).innerText = item.high;
+                document.getElementById(`${id}-prev`).innerText = item.prev;
+                document.getElementById(`${id}-low`).innerText = item.low;
+            };
+
+            renderDetails('vix', data.vix);
+            renderDetails('brent', data.brent);
+
+            // Fear
+            if(data.fear) {
+                document.getElementById('fear-score').innerText = data.fear.score;
+                document.getElementById('fear-rating').innerText = data.fear.rating;
+            }
+
+        } catch (e) {
+            console.error("數據讀取錯誤", e);
+        }
+    }
+    loadData();
+</script>
+</body>
+</html>
