@@ -1,0 +1,32 @@
+name: Daily Market Scraper
+
+on:
+  schedule:
+    - cron: '0 22 * * *'  # 每日 06:00 AM (Taiwan)
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install yfinance requests
+
+      - name: Fetch Market Data
+        run: python update_data.py
+
+      - name: Commit & Push
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add data.json
+          git commit -m "Auto Update Market Data" || exit 0
+          git push
