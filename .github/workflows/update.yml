@@ -5,14 +5,19 @@ on:
     - cron: '0 22 * * *'  # 每日 06:00 AM (Taiwan)
   workflow_dispatch:
 
+# 顯式宣告 GitHub Actions 的寫入權限
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout Repository
+        uses: actions/checkout@v4  # 升級至 v4 解決 Node.js 警告
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5  # 升級至 v5
         with:
           python-version: '3.10'
 
@@ -28,5 +33,5 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add data.json
-          git commit -m "Auto Update Market Data" || exit 0
+          git commit -m "Auto Update Market Data" || echo "No changes to commit"
           git push
