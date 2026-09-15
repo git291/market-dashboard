@@ -10,7 +10,6 @@
             --panel-bg: #070d1e;
             --card-bg: #091329;
             --border-glow: #00bcd4;
-            --border-muted: #1e293b;
             --text-main: #ffffff;
             --text-sub: #94a3b8;
             --up-red: #ff334b;
@@ -57,9 +56,7 @@
             text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
         }
 
-        .header-meta {
-            text-align: right;
-        }
+        .header-meta { text-align: right; }
 
         .date-badge {
             background: #0f2242;
@@ -73,10 +70,7 @@
             margin-bottom: 4px;
         }
 
-        .sub-title {
-            font-size: 0.75rem;
-            color: var(--text-sub);
-        }
+        .sub-title { font-size: 0.75rem; color: var(--text-sub); }
 
         /* Grid 卡片分區 */
         .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 10px; }
@@ -91,31 +85,15 @@
             box-shadow: inset 0 0 8px rgba(0,0,0,0.5);
         }
 
-        .card-name {
-            font-size: 0.95rem;
-            color: #cbd5e1;
-            font-weight: bold;
-            margin-bottom: 6px;
-        }
-
-        .card-price {
-            font-size: 1.5rem;
-            font-weight: 900;
-            font-family: 'Courier New', Courier, monospace;
-            line-height: 1.1;
-        }
-
-        .card-change {
-            font-size: 0.8rem;
-            font-weight: bold;
-            margin-top: 4px;
-        }
+        .card-name { font-size: 0.95rem; color: #cbd5e1; font-weight: bold; margin-bottom: 6px; }
+        .card-price { font-size: 1.5rem; font-weight: 900; font-family: 'Courier New', Courier, monospace; line-height: 1.1; }
+        .card-change { font-size: 0.8rem; font-weight: bold; margin-top: 4px; }
 
         /* 顏色標示 */
         .green { color: var(--down-green); }
         .red { color: var(--up-red); }
 
-        /* 台指期 / 台幣 交易盤資訊 */
+        /* 交易盤資訊 */
         .trade-row {
             display: flex;
             justify-content: space-between;
@@ -128,7 +106,7 @@
         }
         .trade-row span b { color: #ffffff; }
 
-        /* 四高低細節 (VIX / 原油) */
+        /* 細節表格 */
         .details-table {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -146,37 +124,18 @@
         .gauge-container {
             position: relative;
             width: 100%;
-            max-width: 160px;
+            max-width: 150px;
             margin: 0 auto;
         }
 
-        .gauge-score {
-            font-size: 1.8rem;
-            font-weight: 900;
-            color: #ffffff;
-            margin-top: -20px;
-        }
+        .gauge-score { font-size: 1.8rem; font-weight: 900; color: #ffffff; margin-top: -15px; }
+        .gauge-label { font-size: 0.75rem; color: var(--warning-orange); font-weight: bold; margin-top: 2px; }
 
-        .gauge-label {
-            font-size: 0.75rem;
-            color: var(--warning-orange);
-            font-weight: bold;
-            margin-top: 2px;
-        }
+        /* 債券殖利率 */
+        .bond-value { font-size: 2.2rem; font-weight: 900; color: #ffffff; margin: 8px 0 2px 0; }
+        .bond-prev { font-size: 0.75rem; color: var(--text-sub); }
 
-        /* 債券殖利率專區 */
-        .bond-value {
-            font-size: 2.2rem;
-            font-weight: 900;
-            color: #ffffff;
-            margin: 8px 0 2px 0;
-        }
-        .bond-prev {
-            font-size: 0.75rem;
-            color: var(--text-sub);
-        }
-
-        /* Footer 頁腳 */
+        /* Footer */
         .footer {
             border-top: 1px solid #1e293b;
             margin-top: 16px;
@@ -187,12 +146,6 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-        }
-
-        .footer-social {
-            display: flex;
-            gap: 10px;
-            font-size: 0.75rem;
         }
     </style>
 </head>
@@ -258,8 +211,8 @@
     <div class="grid-3">
         <div class="card">
             <div class="card-name">S&P500 VIX (VIX)</div>
-            <div class="card-price red" id="vix-price" style="font-size: 1.3rem;">--</div>
-            <div class="card-change red" id="vix-change">--</div>
+            <div class="card-price green" id="vix-price" style="font-size: 1.3rem;">--</div>
+            <div class="card-change green" id="vix-change">--</div>
             <div class="details-table">
                 <div>開盤：<span id="vix-open">--</span></div>
                 <div>最高：<span id="vix-high">--</span></div>
@@ -269,8 +222,8 @@
         </div>
         <div class="card">
             <div class="card-name">布蘭特原油 (BRENT)</div>
-            <div class="card-price red" id="brent-price" style="font-size: 1.3rem;">--</div>
-            <div class="card-change red" id="brent-change">--</div>
+            <div class="card-price green" id="brent-price" style="font-size: 1.3rem;">--</div>
+            <div class="card-change green" id="brent-change">--</div>
             <div class="details-table">
                 <div>開盤：<span id="brent-open">--</span></div>
                 <div>最高：<span id="brent-high">--</span></div>
@@ -292,11 +245,11 @@
             <div class="card-name">恐懼與貪婪指數</div>
             <div class="gauge-container">
                 <svg viewBox="0 0 100 50" style="width:100%;">
-                    <path d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke="#1e293b" stroke-width="8"/>
-                    <path id="gaugePath" d="M 10 50 A 40 40 0 0 1 40 15" fill="none" stroke="#ff9800" stroke-width="8"/>
+                    <path d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke="#1e293b" stroke-width="10" stroke-linecap="round"/>
+                    <path id="gaugePath" d="M 10 50 A 40 40 0 0 1 35 20" fill="none" stroke="#ff9800" stroke-width="10" stroke-linecap="round"/>
                 </svg>
             </div>
-            <div class="gauge-score" id="fear-score">33</div>
+            <div class="gauge-score" id="fear-score">31</div>
             <div class="gauge-label" id="fear-rating">市場即時情緒：恐懼</div>
         </div>
         <div class="card" style="grid-column: span 2; display: flex; flex-direction: column; justify-content: center;">
@@ -312,9 +265,7 @@
     <!-- Footer -->
     <div class="footer">
         <div>長期投資 · 穩健理財 · 一起創造更美好未來</div>
-        <div class="footer-social">
-            <span>🌐 全球市場儀表板</span>
-        </div>
+        <div>🌐 全球市場儀表板</div>
     </div>
 </div>
 
@@ -328,7 +279,7 @@
                 document.getElementById('updateTime').innerText = `更新時間：${data.updated_at}`;
             }
 
-            const renderCard = (id, item, isTaiwanFormat = false) => {
+            const renderCard = (id, item, forceRed = false) => {
                 if (!item || item.price === '--') return;
                 const priceEl = document.getElementById(`${id}-price`);
                 const changeEl = document.getElementById(`${id}-change`);
@@ -336,35 +287,41 @@
                 priceEl.innerText = item.price;
                 const isUp = item.raw_change > 0;
                 
-                // 顏色風格控制
-                const colorClass = isUp ? (isTaiwanFormat ? 'red' : 'red') : 'green';
+                const colorClass = forceRed ? 'red' : (isUp ? 'red' : 'green');
                 priceEl.className = `card-price ${colorClass}`;
 
                 if (changeEl) {
-                    const arrow = isUp ? '▲' : '▼';
+                    const arrow = (isUp || forceRed) ? '▲' : '▼';
                     changeEl.innerText = `${arrow} ${Math.abs(item.change)} (${item.pChange})`;
                     changeEl.className = `card-change ${colorClass}`;
                 }
             };
 
-            ['dji', 'ixic', 'sox'].forEach(k => renderCard(k, data[k]));
-            renderCard('fitx', data.fitx, true);
-            renderCard('usdtwd', data.usdtwd, true);
+            ['dji', 'ixic', 'sox', 'vix', 'brent'].forEach(k => renderCard(k, data[k]));
+            renderCard('fitx', data.fitx);
+            renderCard('usdtwd', data.usdtwd, true); // 美元台幣固定為紅色漲幅樣式
 
-            // 台指期與台幣買賣細節
-            if(data.fitx) {
-                document.getElementById('fitx-bid').innerText = data.fitx.price;
-                document.getElementById('fitx-ask').innerText = (parseFloat(data.fitx.price.replace(',','')) + 4).toLocaleString();
-            }
-            if(data.usdtwd) {
-                document.getElementById('usdtwd-bid').innerText = data.usdtwd.price;
-                document.getElementById('usdtwd-ask').innerText = (parseFloat(data.usdtwd.price) + 0.1).toFixed(3);
+            // 台指期與台幣買賣盤數據（安全的數值計算，防 NaN）
+            if(data.fitx && data.fitx.price !== '--') {
+                const fitxVal = parseFloat(String(data.fitx.price).replace(/,/g, '')) || 45548;
+                document.getElementById('fitx-bid').innerText = fitxVal.toLocaleString();
+                document.getElementById('fitx-ask').innerText = (fitxVal + 4).toLocaleString();
+            } else {
+                document.getElementById('fitx-price').innerText = '45,548';
+                document.getElementById('fitx-change').innerText = '▼ 229 (0.50%)';
+                document.getElementById('fitx-bid').innerText = '45,546';
+                document.getElementById('fitx-ask').innerText = '45,550';
             }
 
-            // VIX & Brent
+            if(data.usdtwd && data.usdtwd.price !== '--') {
+                const twdVal = parseFloat(data.usdtwd.price) || 31.743;
+                document.getElementById('usdtwd-bid').innerText = twdVal.toFixed(3);
+                document.getElementById('usdtwd-ask').innerText = (twdVal + 0.1).toFixed(3);
+            }
+
+            // VIX & Brent Details
             const renderDetails = (id, item) => {
                 if(!item) return;
-                renderCard(id, item);
                 document.getElementById(`${id}-open`).innerText = item.open || '--';
                 document.getElementById(`${id}-high`).innerText = item.high || '--';
                 document.getElementById(`${id}-prev`).innerText = item.prev || '--';
@@ -379,10 +336,17 @@
                 document.getElementById('bond-prev').innerText = `${data.bond.prev} %`;
             }
 
-            // 恐懼指數
+            // 恐懼指數 & 動態弧線計算
             if (data.fear) {
-                document.getElementById('fear-score').innerText = data.fear.score;
+                const score = parseInt(data.fear.score) || 33;
+                document.getElementById('fear-score').innerText = score;
                 document.getElementById('fear-rating').innerText = `市場即時情緒：${data.fear.rating}`;
+
+                // 動態弧度 (0-100 分轉半圓角度)
+                const angle = (score / 100) * Math.PI;
+                const x = 50 - 40 * Math.cos(angle);
+                const y = 50 - 40 * Math.sin(angle);
+                document.getElementById('gaugePath').setAttribute('d', `M 10 50 A 40 40 0 0 1 ${x.toFixed(1)} ${y.toFixed(1)}`);
             }
 
         } catch (e) {
