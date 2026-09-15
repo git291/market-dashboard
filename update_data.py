@@ -38,12 +38,14 @@ def get_fear_and_greed():
         }
     except Exception as e:
         print(f'Fear & Greed error: {e}')
-        return {'score': 33, 'rating': '恐懼'}
+        return {'score': 31, 'rating': '恐懼'}
 
 
 def fetch_market_data():
-    # 基礎市場清單
     tickers = {
+        'twii': '^TWII',  # 台股大盤
+        'tsmc': '2330.TW',  # 台積電
+        'etf6208': '006208.TW',  # 富邦台50
         'dji': '^DJI',
         'ixic': '^IXIC',
         'sox': '^SOX',
@@ -52,53 +54,51 @@ def fetch_market_data():
         'vix': '^VIX',
         'brent': 'BZ=F',
         'bond': '^TNX',
-        # 新增頂部三大指標
-        'twii': '^TWII',  # 台股大盤
-        'tsmc': '2330.TW',  # 台積電
-        'etf6208': '006208.TW',  # 富邦台50 (006208)
     }
 
     results = {
         'updated_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S (CST)')
     }
 
-    # 抓取常規與頂部數據 (含日收盤與週變化)
     for key, symbol in tickers.items():
         try:
             t = yf.Ticker(symbol)
-            # 抓取日資料算前一日收盤價
-            hist_d = t.history(period='5d').dropna(subset=['Close'])
-            # 抓取週資料算週線趨勢
-            hist_w = t.history(period='1mo', interval='1wk').dropna(
-                subset=['Close']
-            )
+            # 抓取近 1 個月的日資料 (最穩定，避免週線 API 失敗)
+            hist = t.history(period='1mo').dropna(subset=['Close'])
 
-            if len(hist_d) >= 2:
-                latest = hist_d.iloc[-1]
-                prev = hist_d.iloc[-2]
-                price = round(latest['Close'], 2)
-                prev_close = round(prev['Close'], 2)
-                day_change = round(price - prev_close, 2)
+            if len(hist) >= 2:
+                latest_close = hist.iloc[-1]['Close']
+                prev_close = hist.iloc[-2]['Close']
+
+                # 最新價格與當日變動
+                price = round(latest_close, 2)
+                prev_price = round(prev_close, 2)
+                day_change = round(latest_close - prev_close, 2)
                 day_pchange = round((day_change / prev_close) * 100, 2)
 
-                # 週線計算 (最新週 vs 前一週)
-                week_pchange = '--'
-                if len(hist_w) >= 2:
-                    w_latest = hist_w.iloc[-1]['Close']
-                    w_prev = hist_w.iloc[-2]['Close']
-                    w_change = w_latest - w_prev
-                    week_pchange = f'{round((w_change / w_prev) * 100, 2)}%'
+                # 計算近 5 個交易日(週線)變動幅度
+                if len(hist) >= 5:
+                    w_start_close = hist.iloc[-5]['Close']
+                    week_change = round(
+                        ((latest_close - w_start_close) / w_start_close) * 100,
+                        2,
+                    )
+                    week_pchange = (
+                        f"{'+' if week_change > 0 else ''}{week_change}%"
+                    )
+                else:
+                    week_pchange = '--'
 
                 results[key] = {
                     'price': f'{price:,}',
-                    'prev_close': f'{prev_close:,}',
+                    'prev_close': f'{prev_price:,}',
                     'change': abs(day_change),
                     'raw_change': day_change,
                     'pChange': f'{abs(day_pchange)}%',
                     'week_pChange': week_pchange,
-                    'open': clean_val(latest.get('Open')),
-                    'high': clean_val(latest.get('High')),
-                    'low': clean_val(latest.get('Low')),
+                    'open': clean_val(hist.iloc[-1].get('Open')),
+                    'high': clean_val(hist.iloc[-1].get('High')),
+                    'low': clean_val(hist.iloc[-1].get('Low')),
                     'prev': clean_val(prev_close),
                 }
             else:
@@ -111,7 +111,7 @@ def fetch_market_data():
                     'raw_change': 0,
                 }
         except Exception as e:
-            print(f'Error {key}: {e}')
+            print(f'Error fetching {key} ({symbol}): {e}')
             results[key] = {
                 'price': '--',
                 'prev_close': '--',
@@ -121,20 +121,34 @@ def fetch_market_data():
                 'raw_change': 0,
             }
 
-    # 抓取台幣走勢圖：改為「週線趨勢」數據 (半年每週資料, 1wk)
+    # 抓取台幣近 12 週的歷史週線資料
     try:
-        twd_ticker = yf.Ticker('TWD=X')
-        twd_weekly = twd_ticker.history(period='6mo', interval='1wk').dropna(
-            subset=['Close']
-        )
+        twd = yf.Ticker('TWD=X')
+        # 取 3 個月的日資料，每 5 個交易日抽樣一次模擬週線點位
+        twd_hist = twd.history(period='3mo').dropna(subset=['Close'])
         chart_data = []
-        for idx, row in twd_weekly.iterrows():
+
+        # 隔 5 天取一筆日 K 形成週趨勢點
+        sampled_hist = twd_hist.iloc[::5]
+        for idx, row in sampled_hist.iterrows():
             chart_data.append(
                 {'time': idx.strftime('%m/%d'), 'price': round(row['Close'], 3)}
             )
+
+        # 確保包含最新的一筆點位
+        latest_idx = twd_hist.index[-1]
+        latest_row = twd_hist.iloc[-1]
+        if chart_data[-1]['time'] != latest_idx.strftime('%m/%d'):
+            chart_data.append(
+                {
+                    'time': latest_idx.strftime('%m/%d'),
+                    'price': round(latest_row['Close'], 3),
+                }
+            )
+
         results['twd_chart'] = chart_data
     except Exception as e:
-        print(f'TWD Weekly Chart error: {e}')
+        print(f'TWD Chart error: {e}')
         results['twd_chart'] = []
 
     results['fear'] = get_fear_and_greed()
