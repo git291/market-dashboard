@@ -60,7 +60,7 @@
         .green { color: var(--down-green); }
         .red { color: var(--up-red); }
 
-        .trade-row { display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--text-sub); background: #050b18; padding: 2px 6px; border-radius: 4px; margin-top: 6px; }
+        .trade-row { display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--text-sub); background: #050b18; padding: 3px 6px; border-radius: 4px; margin-top: 6px; }
         .trade-row b { color: #fff; }
 
         .details-table { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; font-size: 0.7rem; color: var(--text-sub); border-top: 1px dashed #1e293b; margin-top: 6px; padding-top: 4px; text-align: left; }
@@ -90,18 +90,18 @@
         </div>
         <div class="header-meta">
             <div class="date-badge">📅 2026/09/14 (一)</div>
-            <div class="sub-title" id="updateTime">更新時間：2026-09-15 00:10:00 (CST)</div>
+            <div class="sub-title" id="updateTime">更新時間：2026-09-15 01:22:01 (CST)</div>
         </div>
     </div>
 
-    <!-- [新增] 最上方三個核心台股指標 -->
+    <!-- 第一列：三大核心指標 (修復渲染 id) -->
     <div class="grid-3">
         <div class="card card-top">
             <div class="card-name">台股大盤</div>
             <div class="card-price red" id="twii-price">--</div>
             <div class="trade-row">
                 <span>前日收盤：<b id="twii-prev">--</b></span>
-                <span>週線：<b id="twii-week" class="red">--</b></span>
+                <span>週線：<b id="twii-week">--</b></span>
             </div>
         </div>
         <div class="card card-top">
@@ -109,7 +109,7 @@
             <div class="card-price red" id="tsmc-price">--</div>
             <div class="trade-row">
                 <span>前日收盤：<b id="tsmc-prev">--</b></span>
-                <span>週線：<b id="tsmc-week" class="red">--</b></span>
+                <span>週線：<b id="tsmc-week">--</b></span>
             </div>
         </div>
         <div class="card card-top">
@@ -117,52 +117,52 @@
             <div class="card-price red" id="etf6208-price">--</div>
             <div class="trade-row">
                 <span>前日收盤：<b id="etf6208-prev">--</b></span>
-                <span>週線：<b id="etf6208-week" class="red">--</b></span>
+                <span>週線：<b id="etf6208-week">--</b></span>
             </div>
         </div>
     </div>
 
-    <!-- 美股三大指數 -->
+    <!-- 第二列：美股三大指數 -->
     <div class="grid-3">
         <div class="card">
             <div class="card-name">道瓊指數</div>
-            <div class="card-price green purple-line" id="dji-price">52,504.27</div>
-            <div class="card-change green" id="dji-change">▼ 69.02 (0.13%)</div>
+            <div class="card-price green purple-line" id="dji-price">52,421.2</div>
+            <div class="card-change green" id="dji-change">▼ 152.09 (0.29%)</div>
         </div>
         <div class="card">
             <div class="card-name">那斯達克</div>
-            <div class="card-price green purple-line" id="ixic-price">26,206.00</div>
-            <div class="card-change green" id="ixic-change">▼ 127.03 (0.48%)</div>
+            <div class="card-price green purple-line" id="ixic-price">26,186.41</div>
+            <div class="card-change green" id="ixic-change">▼ 146.62 (0.56%)</div>
         </div>
         <div class="card">
             <div class="card-name">費城半導體</div>
-            <div class="card-price green purple-line" id="sox-price">11,181.50</div>
-            <div class="card-change green" id="sox-change">▼ 642.5 (5.43%)</div>
+            <div class="card-price green purple-line" id="sox-price">11,131.28</div>
+            <div class="card-change green" id="sox-change">▼ 692.72 (5.86%)</div>
         </div>
     </div>
 
-    <!-- 台指期與台幣 -->
+    <!-- 第三列：台指期與台幣 -->
     <div class="grid-2">
         <div class="card">
             <div class="card-name">台指期近全</div>
-            <div class="card-price green" id="fitx-price">45,548</div>
-            <div class="card-change green" id="fitx-change">▼ 229 (0.50%)</div>
-            <div class="trade-row"><span>單：<b>1</b></span><span>買進：<b id="fitx-bid">45,546</b></span><span>賣出：<b id="fitx-ask">45,550</b></span></div>
+            <div class="card-price green" id="fitx-price">45,824.88</div>
+            <div class="card-change green" id="fitx-change">▼ 359.97 (0.78%)</div>
+            <div class="trade-row"><span>單：<b>1</b></span><span>買進：<b>45,546</b></span><span>賣出：<b>45,550</b></span></div>
         </div>
         <div class="card">
             <div class="card-name">台幣</div>
-            <div class="card-price red" id="usdtwd-price">31.743</div>
-            <div class="card-change red" id="usdtwd-change">▲ 0.117 (0.37%)</div>
-            <div class="trade-row"><span>單：<b>--</b></span><span>買進：<b id="usdtwd-bid">31.743</b></span><span>賣出：<b id="usdtwd-ask">31.843</b></span></div>
+            <div class="card-price red" id="usdtwd-price">31.74</div>
+            <div class="card-change red" id="usdtwd-change">▲ 0.07 (0.22%)</div>
+            <div class="trade-row"><span>單：<b>--</b></span><span>買進：<b>31.743</b></span><span>賣出：<b>31.843</b></span></div>
         </div>
     </div>
 
-    <!-- VIX / 原油 / 白底美債 -->
+    <!-- 第四列：VIX / 原油 / 白底美債 -->
     <div class="grid-3">
         <div class="card">
             <div class="card-name">S&P500 VIX (VIX)</div>
-            <div class="card-price red" id="vix-price">16.83</div>
-            <div class="card-change red" id="vix-change">▲ 0.99 (6.25%)</div>
+            <div class="card-price red" id="vix-price">17.1</div>
+            <div class="card-change red" id="vix-change">▲ 1.26 (7.95%)</div>
             <div class="details-table">
                 <div>開盤：<span id="vix-open">17.50</span></div><div>最高：<span id="vix-high">18.17</span></div>
                 <div>昨收：<span id="vix-prev">15.84</span></div><div>最低：<span id="vix-low">16.71</span></div>
@@ -170,8 +170,8 @@
         </div>
         <div class="card">
             <div class="card-name">布蘭特原油 (BRENT)</div>
-            <div class="card-price red" id="brent-price">108.23</div>
-            <div class="card-change red" id="brent-change">▲ 0.65 (0.6%)</div>
+            <div class="card-price red" id="brent-price">106.69</div>
+            <div class="card-change red" id="brent-change">▲ 2.08 (1.99%)</div>
             <div class="details-table">
                 <div>開盤：<span id="brent-open">107.54</span></div><div>最高：<span id="brent-high">109.74</span></div>
                 <div>昨收：<span id="brent-prev">107.58</span></div><div>最低：<span id="brent-low">106.57</span></div>
@@ -185,7 +185,7 @@
         </div>
     </div>
 
-    <!-- 恐懼指針 / 台幣週線走勢圖 / 資券表格 -->
+    <!-- 第五列：恐懼指針 / 台幣週線走勢圖 / 資券表格 -->
     <div class="grid-3">
         <div class="card">
             <div class="card-name">恐懼與貪婪指數</div>
@@ -200,11 +200,11 @@
                     <circle cx="50" cy="50" r="4" fill="#ffffff"/>
                 </svg>
             </div>
-            <div class="gauge-score" id="fear-score">33</div>
+            <div class="gauge-score" id="fear-score">31</div>
             <div style="font-size:0.75rem; color:var(--text-sub);">市場即時情緒指標 ❓</div>
         </div>
 
-        <!-- 台幣趨勢週線圖 -->
+        <!-- 台幣趨勢週線圖 (修復日期與樣式) -->
         <div class="card" style="padding: 6px;">
             <div class="card-name" style="text-align:left; font-size:0.8rem; display:flex; justify-content:space-between;">
                 <span>台幣趨勢週線</span>
@@ -260,18 +260,28 @@
                 document.getElementById('updateTime').innerText = `更新時間：${data.updated_at}`;
             }
 
-            // 頂部三大指標渲染 (台股大盤、台積電、006208)
+            // 渲染第一列台股三大指標
             const renderTopCard = (id, item) => {
-                if(!item || item.price === '--') return;
-                document.getElementById(`${id}-price`).innerText = item.price;
-                document.getElementById(`${id}-prev`).innerText = item.prev_close;
-                document.getElementById(`${id}-week`).innerText = item.week_pChange;
+                if (!item || item.price === '--') return;
+                const priceEl = document.getElementById(`${id}-price`);
+                const prevEl = document.getElementById(`${id}-prev`);
+                const weekEl = document.getElementById(`${id}-week`);
+
+                if (priceEl) priceEl.innerText = item.price;
+                if (prevEl) prevEl.innerText = item.prev_close;
+
+                if (weekEl) {
+                    weekEl.innerText = item.week_pChange;
+                    const isUp = item.week_pChange.includes('+');
+                    weekEl.className = isUp ? 'red' : 'green';
+                }
             };
+
             renderTopCard('twii', data.twii);
             renderTopCard('tsmc', data.tsmc);
             renderTopCard('etf6208', data.etf6208);
 
-            // 基礎卡片渲染
+            // 渲染其餘基礎卡片
             const renderCard = (id, item, forceRed = false) => {
                 if (!item || item.price === '--') return;
                 const priceEl = document.getElementById(`${id}-price`);
@@ -296,7 +306,7 @@
 
             // 恐懼與貪婪指針
             if (data.fear) {
-                const score = parseInt(data.fear.score) || 33;
+                const score = parseInt(data.fear.score) || 31;
                 document.getElementById('fear-score').innerText = score;
                 
                 const angle = (score / 100) * Math.PI;
@@ -306,7 +316,7 @@
                 document.getElementById('needle').setAttribute('y2', y.toFixed(1));
             }
 
-            // 渲染台幣歷史週線圖
+            // 渲染台幣趨勢週線圖（x軸標籤為 mm/dd 日期）
             if (data.twd_chart && data.twd_chart.length > 0) {
                 const labels = data.twd_chart.map(item => item.time);
                 const prices = data.twd_chart.map(item => item.price);
@@ -325,9 +335,10 @@
                             borderColor: '#eab308',
                             borderWidth: 1.5,
                             fill: true,
-                            backgroundColor: 'rgba(234, 179, 8, 0.15)',
-                            pointRadius: 2,
-                            tension: 0.3
+                            backgroundColor: 'rgba(234, 179, 8, 0.12)',
+                            pointRadius: 2.5,
+                            pointHoverRadius: 4,
+                            tension: 0.25
                         }]
                     },
                     options: {
@@ -336,7 +347,7 @@
                         plugins: { legend: { display: false } },
                         scales: {
                             x: {
-                                ticks: { color: '#64748b', font: { size: 8 }, maxTicksLimit: 4 },
+                                ticks: { color: '#64748b', font: { size: 8 }, maxTicksLimit: 5 },
                                 grid: { display: false }
                             },
                             y: {
