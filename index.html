@@ -47,6 +47,7 @@
         .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 10px; }
 
         .card { background: var(--card-bg); border: 1px solid #1a2a47; border-radius: 8px; padding: 10px; text-align: center; position: relative; }
+        .card-top { border-top: 3px solid var(--border-glow); background: #0b1836; }
         .card-white { background: #ffffff !important; color: #0f172a !important; border: 1px solid #cbd5e1; }
         .card-white .card-name { color: #0f172a !important; }
         .card-white .bond-value { color: #0f172a !important; }
@@ -90,6 +91,34 @@
         <div class="header-meta">
             <div class="date-badge">📅 2026/09/14 (一)</div>
             <div class="sub-title" id="updateTime">更新時間：2026-09-15 00:10:00 (CST)</div>
+        </div>
+    </div>
+
+    <!-- [新增] 最上方三個核心台股指標 -->
+    <div class="grid-3">
+        <div class="card card-top">
+            <div class="card-name">台股大盤</div>
+            <div class="card-price red" id="twii-price">--</div>
+            <div class="trade-row">
+                <span>前日收盤：<b id="twii-prev">--</b></span>
+                <span>週線：<b id="twii-week" class="red">--</b></span>
+            </div>
+        </div>
+        <div class="card card-top">
+            <div class="card-name">台積電 (2330)</div>
+            <div class="card-price red" id="tsmc-price">--</div>
+            <div class="trade-row">
+                <span>前日收盤：<b id="tsmc-prev">--</b></span>
+                <span>週線：<b id="tsmc-week" class="red">--</b></span>
+            </div>
+        </div>
+        <div class="card card-top">
+            <div class="card-name">富邦台50 (006208)</div>
+            <div class="card-price red" id="etf6208-price">--</div>
+            <div class="trade-row">
+                <span>前日收盤：<b id="etf6208-prev">--</b></span>
+                <span>週線：<b id="etf6208-week" class="red">--</b></span>
+            </div>
         </div>
     </div>
 
@@ -156,7 +185,7 @@
         </div>
     </div>
 
-    <!-- 恐懼指針 / 真台幣折線圖 / 資券表格 -->
+    <!-- 恐懼指針 / 台幣週線走勢圖 / 資券表格 -->
     <div class="grid-3">
         <div class="card">
             <div class="card-name">恐懼與貪婪指數</div>
@@ -175,11 +204,11 @@
             <div style="font-size:0.75rem; color:var(--text-sub);">市場即時情緒指標 ❓</div>
         </div>
 
-        <!-- 真實台幣走勢圖 -->
+        <!-- 台幣趨勢週線圖 -->
         <div class="card" style="padding: 6px;">
             <div class="card-name" style="text-align:left; font-size:0.8rem; display:flex; justify-content:space-between;">
-                <span>台幣走勢圖</span>
-                <span id="chart-latest-price" style="color:#ef4444;">31.743</span>
+                <span>台幣趨勢週線</span>
+                <span id="chart-latest-price" style="color:#ef4444;">--</span>
             </div>
             <div style="height: 110px; width: 100%; position: relative;">
                 <canvas id="twdCanvas"></canvas>
@@ -231,6 +260,18 @@
                 document.getElementById('updateTime').innerText = `更新時間：${data.updated_at}`;
             }
 
+            // 頂部三大指標渲染 (台股大盤、台積電、006208)
+            const renderTopCard = (id, item) => {
+                if(!item || item.price === '--') return;
+                document.getElementById(`${id}-price`).innerText = item.price;
+                document.getElementById(`${id}-prev`).innerText = item.prev_close;
+                document.getElementById(`${id}-week`).innerText = item.week_pChange;
+            };
+            renderTopCard('twii', data.twii);
+            renderTopCard('tsmc', data.tsmc);
+            renderTopCard('etf6208', data.etf6208);
+
+            // 基礎卡片渲染
             const renderCard = (id, item, forceRed = false) => {
                 if (!item || item.price === '--') return;
                 const priceEl = document.getElementById(`${id}-price`);
@@ -253,7 +294,7 @@
             renderCard('fitx', data.fitx);
             renderCard('usdtwd', data.usdtwd, true);
 
-            // 恐懼指針旋轉
+            // 恐懼與貪婪指針
             if (data.fear) {
                 const score = parseInt(data.fear.score) || 33;
                 document.getElementById('fear-score').innerText = score;
@@ -265,7 +306,7 @@
                 document.getElementById('needle').setAttribute('y2', y.toFixed(1));
             }
 
-            // 渲染真實台幣 5 分鐘折線圖
+            // 渲染台幣歷史週線圖
             if (data.twd_chart && data.twd_chart.length > 0) {
                 const labels = data.twd_chart.map(item => item.time);
                 const prices = data.twd_chart.map(item => item.price);
@@ -285,8 +326,8 @@
                             borderWidth: 1.5,
                             fill: true,
                             backgroundColor: 'rgba(234, 179, 8, 0.15)',
-                            pointRadius: 0,
-                            tension: 0.2
+                            pointRadius: 2,
+                            tension: 0.3
                         }]
                     },
                     options: {
@@ -295,7 +336,7 @@
                         plugins: { legend: { display: false } },
                         scales: {
                             x: {
-                                ticks: { color: '#64748b', font: { size: 8 }, maxTicksLimit: 3 },
+                                ticks: { color: '#64748b', font: { size: 8 }, maxTicksLimit: 4 },
                                 grid: { display: false }
                             },
                             y: {
