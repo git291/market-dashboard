@@ -41,11 +41,38 @@ def get_fear_and_greed():
         return {'score': 31, 'rating': '恐懼'}
 
 
+def fetch_chart_data(ticker_symbol):
+    """抓取近3個月歷史週線點位"""
+    try:
+        t = yf.Ticker(ticker_symbol)
+        hist = t.history(period='3mo').dropna(subset=['Close'])
+        sampled = hist.iloc[::5]  # 隔5個交易日抽樣
+        chart_data = []
+        for idx, row in sampled.iterrows():
+            chart_data.append(
+                {'time': idx.strftime('%m/%d'), 'price': round(row['Close'], 2)}
+            )
+
+        latest_idx = hist.index[-1]
+        latest_row = hist.iloc[-1]
+        if chart_data[-1]['time'] != latest_idx.strftime('%m/%d'):
+            chart_data.append(
+                {
+                    'time': latest_idx.strftime('%m/%d'),
+                    'price': round(latest_row['Close'], 2),
+                }
+            )
+        return chart_data
+    except Exception as e:
+        print(f'Error chart {ticker_symbol}: {e}')
+        return []
+
+
 def fetch_market_data():
     tickers = {
-        'twii': '^TWII',  # 台股大盤
-        'tsmc': '2330.TW',  # 台積電
-        'etf6208': '006208.TW',  # 富邦台50
+        'twii': '^TWII',
+        'tsmc': '2330.TW',
+        'etf6208': '006208.TW',
         'dji': '^DJI',
         'ixic': '^IXIC',
         'sox': '^SOX',
@@ -63,20 +90,17 @@ def fetch_market_data():
     for key, symbol in tickers.items():
         try:
             t = yf.Ticker(symbol)
-            # 抓取近 1 個月的日資料 (最穩定，避免週線 API 失敗)
             hist = t.history(period='1mo').dropna(subset=['Close'])
 
             if len(hist) >= 2:
                 latest_close = hist.iloc[-1]['Close']
                 prev_close = hist.iloc[-2]['Close']
 
-                # 最新價格與當日變動
                 price = round(latest_close, 2)
                 prev_price = round(prev_close, 2)
                 day_change = round(latest_close - prev_close, 2)
                 day_pchange = round((day_change / prev_close) * 100, 2)
 
-                # 計算近 5 個交易日(週線)變動幅度
                 if len(hist) >= 5:
                     w_start_close = hist.iloc[-5]['Close']
                     week_change = round(
@@ -111,7 +135,7 @@ def fetch_market_data():
                     'raw_change': 0,
                 }
         except Exception as e:
-            print(f'Error fetching {key} ({symbol}): {e}')
+            print(f'Error fetching {key}: {e}')
             results[key] = {
                 'price': '--',
                 'prev_close': '--',
@@ -121,35 +145,14 @@ def fetch_market_data():
                 'raw_change': 0,
             }
 
-    # 抓取台幣近 12 週的歷史週線資料
-    try:
-        twd = yf.Ticker('TWD=X')
-        # 取 3 個月的日資料，每 5 個交易日抽樣一次模擬週線點位
-        twd_hist = twd.history(period='3mo').dropna(subset=['Close'])
-        chart_data = []
-
-        # 隔 5 天取一筆日 K 形成週趨勢點
-        sampled_hist = twd_hist.iloc[::5]
-        for idx, row in sampled_hist.iterrows():
-            chart_data.append(
-                {'time': idx.strftime('%m/%d'), 'price': round(row['Close'], 3)}
-            )
-
-        # 確保包含最新的一筆點位
-        latest_idx = twd_hist.index[-1]
-        latest_row = twd_hist.iloc[-1]
-        if chart_data[-1]['time'] != latest_idx.strftime('%m/%d'):
-            chart_data.append(
-                {
-                    'time': latest_idx.strftime('%m/%d'),
-                    'price': round(latest_row['Close'], 3),
-                }
-            )
-
-        results['twd_chart'] = chart_data
-    except Exception as e:
-        print(f'TWD Chart error: {e}')
-        results['twd_chart'] = []
+    # 抓取週線圖表資料 (大盤、台積電、006208、台幣、布蘭特原油)
+    results['charts'] = {
+        'twii': fetch_chart_data('^TWII'),
+        'tsmc': fetch_chart_data('2330.TW'),
+        'etf6208': fetch_chart_data('006208.TW'),
+        'twd': fetch_chart_data('TWD=X'),
+        'brent': fetch_chart_data('BZ=F'),
+    }
 
     results['fear'] = get_fear_and_greed()
 
