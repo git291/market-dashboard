@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>全球市場行情一覽</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
             --bg-color: #030712;
@@ -69,13 +70,7 @@
 
         .bond-value { font-size: 2.2rem; font-weight: 900; color: #fff; margin: 10px 0 2px 0; }
 
-        /* ========= 精準還原：台幣走勢圖 ========= */
-        .chart-box { background: #020617; border: 1px solid #1e293b; border-radius: 6px; padding: 6px; height: 130px; position: relative; display: flex; flex-direction: column; justify-content: space-between; }
-        .chart-header { display: flex; justify-content: space-between; font-size: 0.75rem; color: #ef4444; font-weight: bold; }
-        .chart-canvas { width: 100%; height: 80px; }
-
-        /* ========= 精準還原：資券表格 ========= */
-        .etf-table-container { height: 130px; overflow-y: auto; }
+        .etf-table-container { height: 110px; overflow-y: auto; }
         .etf-table { width: 100%; font-size: 0.65rem; border-collapse: collapse; text-align: right; }
         .etf-table th { background: #0f172a; color: #94a3b8; padding: 3px 2px; position: sticky; top: 0; font-weight: normal; }
         .etf-table td { padding: 3px 2px; border-bottom: 1px solid #111827; }
@@ -98,72 +93,71 @@
         </div>
     </div>
 
-    <!-- Top 3 -->
+    <!-- 美股三大指數 -->
     <div class="grid-3">
         <div class="card">
             <div class="card-name">道瓊指數</div>
-            <div class="card-price green purple-line">52,504.27</div>
-            <div class="card-change green">▼ 69.02 (0.13%)</div>
+            <div class="card-price green purple-line" id="dji-price">52,504.27</div>
+            <div class="card-change green" id="dji-change">▼ 69.02 (0.13%)</div>
         </div>
         <div class="card">
             <div class="card-name">那斯達克</div>
-            <div class="card-price green purple-line">26,206.00</div>
-            <div class="card-change green">▼ 127.03 (0.48%)</div>
+            <div class="card-price green purple-line" id="ixic-price">26,206.00</div>
+            <div class="card-change green" id="ixic-change">▼ 127.03 (0.48%)</div>
         </div>
         <div class="card">
             <div class="card-name">費城半導體</div>
-            <div class="card-price green purple-line">11,181.50</div>
-            <div class="card-change green">▼ 642.5 (5.43%)</div>
+            <div class="card-price green purple-line" id="sox-price">11,181.50</div>
+            <div class="card-change green" id="sox-change">▼ 642.5 (5.43%)</div>
         </div>
     </div>
 
-    <!-- Mid 2 -->
+    <!-- 台指期與台幣 -->
     <div class="grid-2">
         <div class="card">
             <div class="card-name">台指期近全</div>
-            <div class="card-price green">45,548</div>
-            <div class="card-change green">▼ 229 (0.50%)</div>
-            <div class="trade-row"><span>單：<b>1</b></span><span>買進：<b>45,546</b></span><span>賣出：<b>45,550</b></span></div>
+            <div class="card-price green" id="fitx-price">45,548</div>
+            <div class="card-change green" id="fitx-change">▼ 229 (0.50%)</div>
+            <div class="trade-row"><span>單：<b>1</b></span><span>買進：<b id="fitx-bid">45,546</b></span><span>賣出：<b id="fitx-ask">45,550</b></span></div>
         </div>
         <div class="card">
             <div class="card-name">台幣</div>
-            <div class="card-price red">31.743</div>
-            <div class="card-change red">▲ 0.117 (0.37%)</div>
-            <div class="trade-row"><span>單：<b>--</b></span><span>買進：<b>31.743</b></span><span>賣出：<b>31.843</b></span></div>
+            <div class="card-price red" id="usdtwd-price">31.743</div>
+            <div class="card-change red" id="usdtwd-change">▲ 0.117 (0.37%)</div>
+            <div class="trade-row"><span>單：<b>--</b></span><span>買進：<b id="usdtwd-bid">31.743</b></span><span>賣出：<b id="usdtwd-ask">31.843</b></span></div>
         </div>
     </div>
 
-    <!-- Bottom 3 -->
+    <!-- VIX / 原油 / 白底美債 -->
     <div class="grid-3">
         <div class="card">
             <div class="card-name">S&P500 VIX (VIX)</div>
-            <div class="card-price red">16.83</div>
-            <div class="card-change red">▲ 0.99 (6.25%)</div>
+            <div class="card-price red" id="vix-price">16.83</div>
+            <div class="card-change red" id="vix-change">▲ 0.99 (6.25%)</div>
             <div class="details-table">
-                <div>開盤：<span>17.50</span></div><div>最高：<span>18.17</span></div>
-                <div>昨收：<span>15.84</span></div><div>最低：<span>16.71</span></div>
+                <div>開盤：<span id="vix-open">17.50</span></div><div>最高：<span id="vix-high">18.17</span></div>
+                <div>昨收：<span id="vix-prev">15.84</span></div><div>最低：<span id="vix-low">16.71</span></div>
             </div>
         </div>
         <div class="card">
             <div class="card-name">布蘭特原油 (BRENT)</div>
-            <div class="card-price red">108.23</div>
-            <div class="card-change red">▲ 0.65 (0.6%)</div>
+            <div class="card-price red" id="brent-price">108.23</div>
+            <div class="card-change red" id="brent-change">▲ 0.65 (0.6%)</div>
             <div class="details-table">
-                <div>開盤：<span>107.54</span></div><div>最高：<span>109.74</span></div>
-                <div>昨收：<span>107.58</span></div><div>最低：<span>106.57</span></div>
+                <div>開盤：<span id="brent-open">107.54</span></div><div>最高：<span id="brent-high">109.74</span></div>
+                <div>昨收：<span id="brent-prev">107.58</span></div><div>最低：<span id="brent-low">106.57</span></div>
             </div>
         </div>
         <div class="card card-white">
             <div class="card-name">美國10年期公債殖利率</div>
             <div style="font-size:0.75rem; color:#64748b;">最新數據</div>
-            <div class="bond-value">4.99 %</div>
-            <div style="font-size:0.75rem; color:#64748b;">前值：4.95 %</div>
+            <div class="bond-value" id="bond-price">4.99 %</div>
+            <div style="font-size:0.75rem; color:#64748b;">前值：<span id="bond-prev">4.95 %</span></div>
         </div>
     </div>
 
-    <!-- Bottom Lower: 恐懼指數 / 台幣走勢圖 / 上市台股扣除ETF資券進出行情 -->
+    <!-- 恐懼指針 / 真台幣折線圖 / 資券表格 -->
     <div class="grid-3">
-        <!-- 恐懼與貪婪 -->
         <div class="card">
             <div class="card-name">恐懼與貪婪指數</div>
             <div class="gauge-container">
@@ -173,34 +167,26 @@
                     <path d="M 42 11 A 40 40 0 0 1 58 11" fill="none" stroke="#eab308" stroke-width="8"/>
                     <path d="M 58 11 A 40 40 0 0 1 74 21" fill="none" stroke="#22c55e" stroke-width="8"/>
                     <path d="M 74 21 A 40 40 0 0 1 90 50" fill="none" stroke="#15803d" stroke-width="8"/>
-                    <line x1="50" y1="50" x2="32" y2="22" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round"/>
+                    <line id="needle" x1="50" y1="50" x2="32" y2="22" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round"/>
                     <circle cx="50" cy="50" r="4" fill="#ffffff"/>
                 </svg>
             </div>
-            <div class="gauge-score">33</div>
+            <div class="gauge-score" id="fear-score">33</div>
             <div style="font-size:0.75rem; color:var(--text-sub);">市場即時情緒指標 ❓</div>
         </div>
 
-        <!-- 中間：台幣走勢圖 (完全比照原圖樣式) -->
+        <!-- 真實台幣走勢圖 -->
         <div class="card" style="padding: 6px;">
-            <div class="card-name" style="text-align:left; font-size:0.8rem;">台幣走勢圖</div>
-            <div class="chart-box">
-                <div class="chart-header">
-                    <span>31.743</span>
-                    <span style="color:#64748b; font-weight:normal;">31.750</span>
-                </div>
-                <!-- K線/走勢圖繪製 -->
-                <svg class="chart-canvas" viewBox="0 0 100 40" preserveAspectRatio="none">
-                    <path d="M 0 35 L 15 32 L 25 38 L 40 20 L 55 25 L 70 10 L 85 15 L 100 5" fill="none" stroke="#eab308" stroke-width="1.5"/>
-                    <path d="M 0 35 L 15 32 L 25 38 L 40 20 L 55 25 L 70 10 L 85 15 L 100 5 L 100 40 L 0 40 Z" fill="rgba(234, 179, 8, 0.15)"/>
-                </svg>
-                <div style="display:flex; justify-content:space-between; font-size:0.6rem; color:#64748b;">
-                    <span>09:00</span><span>12:00</span><span>16:00</span>
-                </div>
+            <div class="card-name" style="text-align:left; font-size:0.8rem; display:flex; justify-content:space-between;">
+                <span>台幣走勢圖</span>
+                <span id="chart-latest-price" style="color:#ef4444;">31.743</span>
+            </div>
+            <div style="height: 110px; width: 100%; position: relative;">
+                <canvas id="twdCanvas"></canvas>
             </div>
         </div>
 
-        <!-- 右下：上市台股扣除ETF資券進出行情 (完整還原原圖多欄位) -->
+        <!-- 資券行情表格 -->
         <div class="card" style="padding: 6px;">
             <div class="card-name" style="text-align:left; font-size:0.75rem;">上市台股扣除ETF資券進出行情</div>
             <div class="etf-table-container">
@@ -227,12 +213,106 @@
         </div>
     </div>
 
-    <!-- Footer -->
     <div class="footer">
         <div>長期投資 · 穩健理財 · 一起創造更美好未來</div>
         <div>🌐 全球市場儀表板</div>
     </div>
 </div>
 
+<script>
+    let twdChart = null;
+
+    async function loadData() {
+        try {
+            const res = await fetch('data.json?t=' + Date.now());
+            const data = await res.json();
+
+            if (data.updated_at) {
+                document.getElementById('updateTime').innerText = `更新時間：${data.updated_at}`;
+            }
+
+            const renderCard = (id, item, forceRed = false) => {
+                if (!item || item.price === '--') return;
+                const priceEl = document.getElementById(`${id}-price`);
+                const changeEl = document.getElementById(`${id}-change`);
+                
+                priceEl.innerText = item.price;
+                const isUp = item.raw_change > 0;
+                
+                const colorClass = forceRed ? 'red' : (isUp ? 'red' : 'green');
+                priceEl.className = `card-price ${colorClass}`;
+
+                if (changeEl) {
+                    const arrow = (isUp || forceRed) ? '▲' : '▼';
+                    changeEl.innerText = `${arrow} ${Math.abs(item.change)} (${item.pChange})`;
+                    changeEl.className = `card-change ${colorClass}`;
+                }
+            };
+
+            ['dji', 'ixic', 'sox', 'vix', 'brent'].forEach(k => renderCard(k, data[k]));
+            renderCard('fitx', data.fitx);
+            renderCard('usdtwd', data.usdtwd, true);
+
+            // 恐懼指針旋轉
+            if (data.fear) {
+                const score = parseInt(data.fear.score) || 33;
+                document.getElementById('fear-score').innerText = score;
+                
+                const angle = (score / 100) * Math.PI;
+                const x = 50 - 32 * Math.cos(angle);
+                const y = 50 - 32 * Math.sin(angle);
+                document.getElementById('needle').setAttribute('x2', x.toFixed(1));
+                document.getElementById('needle').setAttribute('y2', y.toFixed(1));
+            }
+
+            // 渲染真實台幣 5 分鐘折線圖
+            if (data.twd_chart && data.twd_chart.length > 0) {
+                const labels = data.twd_chart.map(item => item.time);
+                const prices = data.twd_chart.map(item => item.price);
+                
+                document.getElementById('chart-latest-price').innerText = prices[prices.length - 1];
+
+                const ctx = document.getElementById('twdCanvas').getContext('2d');
+                if (twdChart) twdChart.destroy();
+
+                twdChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: prices,
+                            borderColor: '#eab308',
+                            borderWidth: 1.5,
+                            fill: true,
+                            backgroundColor: 'rgba(234, 179, 8, 0.15)',
+                            pointRadius: 0,
+                            tension: 0.2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: {
+                                ticks: { color: '#64748b', font: { size: 8 }, maxTicksLimit: 3 },
+                                grid: { display: false }
+                            },
+                            y: {
+                                ticks: { color: '#64748b', font: { size: 8 } },
+                                grid: { color: '#111827' }
+                            }
+                        }
+                    }
+                });
+            }
+
+        } catch (e) {
+            console.error("數據同步失敗:", e);
+        }
+    }
+
+    loadData();
+</script>
 </body>
 </html>
