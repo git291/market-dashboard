@@ -37,26 +37,27 @@ def get_fear_and_greed():
             'rating': rating_map.get(rating.lower(), rating),
         }
     except Exception as e:
-        print(f'Fear & Greed fetch error: {e}')
+        print(f'Fear & Greed error: {e}')
         return {'score': 33, 'rating': '恐懼'}
 
 
 def fetch_market_data():
     tickers = {
-        'dji': '^DJI',  # 道瓊
-        'ixic': '^IXIC',  # 那斯達克
-        'sox': '^SOX',  # 費城半導體
-        'fitx': '^TWII',  # 台股加權指數代表
-        'usdtwd': 'TWD=X',  # 美元/台幣
-        'vix': '^VIX',  # VIX
-        'brent': 'BZ=F',  # 布蘭特原油
-        'bond': '^TNX',  # 美國 10 年期公債殖利率
+        'dji': '^DJI',
+        'ixic': '^IXIC',
+        'sox': '^SOX',
+        'fitx': '^TWII',
+        'usdtwd': 'TWD=X',
+        'vix': '^VIX',
+        'brent': 'BZ=F',
+        'bond': '^TNX',
     }
 
     results = {
         'updated_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S (CST)')
     }
 
+    # 抓取各項行情
     for key, symbol in tickers.items():
         try:
             t = yf.Ticker(symbol)
@@ -91,13 +92,27 @@ def fetch_market_data():
                     'raw_change': 0,
                 }
         except Exception as e:
-            print(f'Error fetching {key}: {e}')
+            print(f'Error {key}: {e}')
             results[key] = {
                 'price': '--',
                 'change': '--',
                 'pChange': '--',
                 'raw_change': 0,
             }
+
+    # 抓取台幣今日真實 5 分鐘走勢圖數據
+    try:
+        twd_ticker = yf.Ticker('TWD=X')
+        twd_hist = twd_ticker.history(period='1d', interval='5m')
+        chart_data = []
+        for idx, row in twd_hist.iterrows():
+            chart_data.append(
+                {'time': idx.strftime('%H:%M'), 'price': round(row['Close'], 3)}
+            )
+        results['twd_chart'] = chart_data
+    except Exception as e:
+        print(f'TWD Chart error: {e}')
+        results['twd_chart'] = []
 
     results['fear'] = get_fear_and_greed()
 
