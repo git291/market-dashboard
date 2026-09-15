@@ -39,7 +39,7 @@
             border-radius: 12px;
             padding: 16px;
             box-shadow: 0 0 15px rgba(0, 188, 212, 0.3);
-            overflow: hidden; /* 防止內容溢出外框 */
+            overflow: hidden;
         }
 
         .header { 
@@ -56,7 +56,7 @@
 
         .grid-3 { 
             display: grid; 
-            grid-template-columns: repeat(3, minmax(0, 1fr)); /* minmax(0, 1fr) 防止內容撐開網格 */
+            grid-template-columns: repeat(3, minmax(0, 1fr)); 
             gap: 10px; 
             margin-bottom: 10px; 
         }
@@ -74,16 +74,15 @@
             padding: 8px; 
             text-align: center; 
             position: relative;
-            min-width: 0; /* 關鍵修正：確保 Grid 內的卡片不會溢出 */
+            min-width: 0;
         }
-        .card-top { border-top: 3px solid var(--border-glow); background: #0b1836; padding: 8px 6px 4px 6px; }
+        .card-top { border-top: 3px solid var(--border-glow); background: #0b1836; padding: 8px 6px 6px 6px; }
         .card-white { background: #ffffff !important; color: #0f172a !important; border: 1px solid #cbd5e1; }
         .card-white .card-name { color: #0f172a !important; }
         .card-white .bond-value { color: #0f172a !important; }
 
         .card-name { font-size: 0.85rem; color: #cbd5e1; font-weight: bold; margin-bottom: 2px; }
         
-        /* 縮小點數字級與調整距離，防止換行破版 */
         .card-price { 
             font-size: 1.25rem; 
             font-weight: 900; 
@@ -126,9 +125,8 @@
         .etf-table td { padding: 3px 2px; border-bottom: 1px solid #111827; }
         .etf-table td:first-child { text-align: center; color: #94a3b8; }
 
-        /* 週線趨勢圖容器的高度優化 */
-        .chart-box-sm { height: 36px; width: 100%; margin-top: 4px; }
-        .chart-box-md { height: 95px; width: 100%; position: relative; }
+        /* 週線圖統一放大適應高度 */
+        .chart-box-md { height: 85px; width: 100%; position: relative; margin-top: 4px; }
 
         .footer { border-top: 1px solid #1e293b; margin-top: 12px; padding-top: 8px; font-size: 0.75rem; color: var(--text-sub); display: flex; justify-content: space-between; }
     </style>
@@ -147,34 +145,34 @@
         </div>
     </div>
 
-    <!-- 第一列：三大核心指標 (含週線趨勢圖) -->
+    <!-- 第一列：三大核心指標 (改為完整週線圖顯示) -->
     <div class="grid-3">
         <div class="card card-top">
-            <div class="card-name">台股大盤</div>
+            <div class="card-name">台股大盤 (週線)</div>
             <div class="card-price red" id="twii-price">--</div>
             <div class="trade-row">
                 <span>昨收：<b id="twii-prev">--</b></span>
                 <span>週線：<b id="twii-week">--</b></span>
             </div>
-            <div class="chart-box-sm"><canvas id="chart-twii"></canvas></div>
+            <div class="chart-box-md"><canvas id="chart-twii"></canvas></div>
         </div>
         <div class="card card-top">
-            <div class="card-name">台積電 (2330)</div>
+            <div class="card-name">台積電 2330 (週線)</div>
             <div class="card-price red" id="tsmc-price">--</div>
             <div class="trade-row">
                 <span>昨收：<b id="tsmc-prev">--</b></span>
                 <span>週線：<b id="tsmc-week">--</b></span>
             </div>
-            <div class="chart-box-sm"><canvas id="chart-tsmc"></canvas></div>
+            <div class="chart-box-md"><canvas id="chart-tsmc"></canvas></div>
         </div>
         <div class="card card-top">
-            <div class="card-name">富邦台50 (006208)</div>
+            <div class="card-name">富邦台50 006208 (週線)</div>
             <div class="card-price red" id="etf6208-price">--</div>
             <div class="trade-row">
                 <span>昨收：<b id="etf6208-prev">--</b></span>
                 <span>週線：<b id="etf6208-week">--</b></span>
             </div>
-            <div class="chart-box-sm"><canvas id="chart-etf6208"></canvas></div>
+            <div class="chart-box-md"><canvas id="chart-etf6208"></canvas></div>
         </div>
     </div>
 
@@ -307,41 +305,14 @@
 <script>
     let chartInstances = {};
 
-    function renderSparkline(canvasId, chartData, color='#ef4444') {
-        if (!chartData || chartData.length === 0) return;
-        const ctx = document.getElementById(canvasId).getContext('2d');
-        const prices = chartData.map(d => d.price);
-        
-        if (chartInstances[canvasId]) chartInstances[canvasId].destroy();
-
-        chartInstances[canvasId] = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: chartData.map(d => d.time),
-                datasets: [{
-                    data: prices,
-                    borderColor: color,
-                    borderWidth: 1.5,
-                    fill: true,
-                    backgroundColor: color === '#ef4444' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(0, 230, 118, 0.1)',
-                    pointRadius: 0,
-                    tension: 0.3
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: { x: { display: false }, y: { display: false } }
-            }
-        });
-    }
-
-    function renderDetailChart(canvasId, chartData, color='#eab308') {
+    // 統一使用的詳細週線圖繪製函式（帶 X、Y 軸刻度與網格）
+    function renderDetailChart(canvasId, chartData, color='#ef4444') {
         if (!chartData || chartData.length === 0) return;
         const ctx = document.getElementById(canvasId).getContext('2d');
         
         if (chartInstances[canvasId]) chartInstances[canvasId].destroy();
+
+        const bgAlpha = color === '#ef4444' ? 'rgba(239, 68, 68, 0.12)' : (color === '#00e676' ? 'rgba(0, 230, 118, 0.12)' : 'rgba(234, 179, 8, 0.12)');
 
         chartInstances[canvasId] = new Chart(ctx, {
             type: 'line',
@@ -352,8 +323,8 @@
                     borderColor: color,
                     borderWidth: 1.5,
                     fill: true,
-                    backgroundColor: 'rgba(234, 179, 8, 0.12)',
-                    pointRadius: 2,
+                    backgroundColor: bgAlpha,
+                    pointRadius: 1.5,
                     tension: 0.3
                 }]
             },
@@ -426,11 +397,11 @@
                 document.getElementById('needle').setAttribute('y2', (50 - 32 * Math.sin(angle)).toFixed(1));
             }
 
-            // 渲染頂部三大指標的迷你週線圖
+            // 渲染全卡片的詳細週線圖 (含 X、Y 軸刻度)
             if (data.charts) {
-                renderSparkline('chart-twii', data.charts.twii, data.twii.raw_change >= 0 ? '#ef4444' : '#00e676');
-                renderSparkline('chart-tsmc', data.charts.tsmc, data.tsmc.raw_change >= 0 ? '#ef4444' : '#00e676');
-                renderSparkline('chart-etf6208', data.charts.etf6208, data.etf6208.raw_change >= 0 ? '#ef4444' : '#00e676');
+                renderDetailChart('chart-twii', data.charts.twii, data.twii.raw_change >= 0 ? '#ef4444' : '#00e676');
+                renderDetailChart('chart-tsmc', data.charts.tsmc, data.tsmc.raw_change >= 0 ? '#ef4444' : '#00e676');
+                renderDetailChart('chart-etf6208', data.charts.etf6208, data.etf6208.raw_change >= 0 ? '#ef4444' : '#00e676');
                 
                 if (data.charts.twd) {
                     document.getElementById('chart-twd-price').innerText = data.charts.twd.slice(-1)[0]?.price || '--';
