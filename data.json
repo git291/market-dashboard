@@ -1,36 +1,36 @@
 {
-  "updated_at": "2026-09-15 05:15:07 (CST)",
+  "updated_at": "2026-09-15 05:20:26 (CST)",
   "twii": {
-    "price": "45,610.91",
+    "price": "45,547.83",
     "prev_close": "45,862.52",
-    "change": 251.61,
-    "raw_change": -251.61,
-    "pChange": "0.55%",
-    "week_pChange": "-3.33%",
+    "change": 314.69,
+    "raw_change": -314.69,
+    "pChange": "0.69%",
+    "week_pChange": "-3.47%",
     "open": 45847.27,
     "high": 46009.85,
     "low": 45538.46,
     "prev": 45862.52
   },
   "tsmc": {
-    "price": "2,385.0",
+    "price": "2,380.0",
     "prev_close": "2,380.0",
-    "change": 5.0,
-    "raw_change": 5.0,
-    "pChange": "0.21%",
-    "week_pChange": "-3.25%",
+    "change": 0.0,
+    "raw_change": 0.0,
+    "pChange": "0.0%",
+    "week_pChange": "-3.45%",
     "open": 2405.0,
     "high": 2405.0,
     "low": 2380.0,
     "prev": 2380.0
   },
   "etf6208": {
-    "price": "243.7",
+    "price": "243.5",
     "prev_close": "246.1",
-    "change": 2.4,
-    "raw_change": -2.4,
-    "pChange": "0.98%",
-    "week_pChange": "-2.54%",
+    "change": 2.6,
+    "raw_change": -2.6,
+    "pChange": "1.06%",
+    "week_pChange": "-2.62%",
     "open": 244.4,
     "high": 245.0,
     "low": 243.2,
@@ -73,26 +73,26 @@
     "prev": 11824.0
   },
   "fitx": {
-    "price": "45,610.91",
+    "price": "45,547.83",
     "prev_close": "45,862.52",
-    "change": 251.61,
-    "raw_change": -251.61,
-    "pChange": "0.55%",
-    "week_pChange": "-3.33%",
+    "change": 314.69,
+    "raw_change": -314.69,
+    "pChange": "0.69%",
+    "week_pChange": "-3.47%",
     "open": 45847.27,
     "high": 46009.85,
     "low": 45538.46,
     "prev": 45862.52
   },
   "usdtwd": {
-    "price": "31.81",
+    "price": "31.8",
     "prev_close": "31.68",
-    "change": 0.14,
-    "raw_change": 0.14,
-    "pChange": "0.44%",
-    "week_pChange": "+1.0%",
+    "change": 0.12,
+    "raw_change": 0.12,
+    "pChange": "0.38%",
+    "week_pChange": "+0.96%",
     "open": 31.68,
-    "high": 31.84,
+    "high": 31.86,
     "low": 31.67,
     "prev": 31.68
   },
@@ -109,12 +109,12 @@
     "prev": 15.84
   },
   "brent": {
-    "price": "107.28",
+    "price": "107.46",
     "prev_close": "105.68",
-    "change": 1.6,
-    "raw_change": 1.6,
-    "pChange": "1.51%",
-    "week_pChange": "+6.0%",
+    "change": 1.78,
+    "raw_change": 1.78,
+    "pChange": "1.68%",
+    "week_pChange": "+6.18%",
     "open": 106.31,
     "high": 107.46,
     "low": 106.24,
@@ -188,7 +188,7 @@
       },
       {
         "time": "09/15",
-        "price": 45610.91
+        "price": 45547.83
       }
     ],
     "tsmc": [
@@ -246,7 +246,7 @@
       },
       {
         "time": "09/15",
-        "price": 2385.0
+        "price": 2380.0
       }
     ],
     "etf6208": [
@@ -304,7 +304,7 @@
       },
       {
         "time": "09/15",
-        "price": 243.7
+        "price": 243.5
       }
     ],
     "twd": [
@@ -366,7 +366,7 @@
       },
       {
         "time": "09/15",
-        "price": 31.8
+        "price": 31.83
       }
     ],
     "brent": [
@@ -424,7 +424,7 @@
       },
       {
         "time": "09/15",
-        "price": 107.28
+        "price": 107.46
       }
     ]
   },
