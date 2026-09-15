@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-15 00:25:40 (CST)",
+  "updated_at": "2026-09-15 00:37:33 (CST)",
   "dji": {
     "price": "52,421.2",
     "change": 152.09,
@@ -42,9 +42,9 @@
   },
   "usdtwd": {
     "price": "31.7",
-    "change": 0.03,
-    "raw_change": 0.03,
-    "pChange": "0.09%",
+    "change": 0.02,
+    "raw_change": 0.02,
+    "pChange": "0.06%",
     "open": 31.68,
     "high": 31.76,
     "low": 31.68,
@@ -61,12 +61,12 @@
     "prev": 15.84
   },
   "brent": {
-    "price": "106.68",
-    "change": 2.07,
-    "raw_change": 2.07,
-    "pChange": "1.98%",
+    "price": "106.89",
+    "change": 2.28,
+    "raw_change": 2.28,
+    "pChange": "2.18%",
     "open": 106.31,
-    "high": 106.72,
+    "high": 106.99,
     "low": 106.24,
     "prev": 104.61
   },
