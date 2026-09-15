@@ -46,7 +46,7 @@ def fetch_market_data():
         'dji': '^DJI',  # 道瓊
         'ixic': '^IXIC',  # 那斯達克
         'sox': '^SOX',  # 費城半導體
-        'fitx': '^TWII',  # 台股大盤 / 台指期代表
+        'fitx': '^TWII',  # 台股加權指數代表
         'usdtwd': 'TWD=X',  # 美元/台幣
         'vix': '^VIX',  # VIX
         'brent': 'BZ=F',  # 布蘭特原油
@@ -60,10 +60,7 @@ def fetch_market_data():
     for key, symbol in tickers.items():
         try:
             t = yf.Ticker(symbol)
-            hist = t.history(period='5d')
-
-            # 排除 NaN 列
-            hist = hist.dropna(subset=['Close'])
+            hist = t.history(period='5d').dropna(subset=['Close'])
 
             if len(hist) >= 2:
                 latest = hist.iloc[-1]
@@ -78,9 +75,9 @@ def fetch_market_data():
 
                 results[key] = {
                     'price': f'{price:,}',
-                    'change': change,
+                    'change': abs(change),
                     'raw_change': change,
-                    'pChange': f'{p_change}%',
+                    'pChange': f'{abs(p_change)}%',
                     'open': clean_val(latest.get('Open')),
                     'high': clean_val(latest.get('High')),
                     'low': clean_val(latest.get('Low')),
