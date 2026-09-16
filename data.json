@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-16 01:05:53",
+  "updated_at": "2026-09-16 01:16:30",
   "twii": {
     "price": "21,750.12",
     "prev_close": "21,600.00",
@@ -73,21 +73,21 @@
   },
   "margin_data": [
     {
-      "date": "09/13",
+      "date": "09/15",
       "margin_buy_sell": "-12.5億",
       "short_buy_sell": "+1,200",
       "margin_balance": "2,650億",
       "short_balance": "32.5萬"
     },
     {
-      "date": "09/12",
+      "date": "09/14",
       "margin_buy_sell": "+18.3億",
       "short_buy_sell": "-850",
-      "margin_balance": "2,6625億",
+      "margin_balance": "2,662億",
       "short_balance": "32.3萬"
     },
     {
-      "date": "09/11",
+      "date": "09/13",
       "margin_buy_sell": "+5.2億",
       "short_buy_sell": "+3,100",
       "margin_balance": "2,644億",
