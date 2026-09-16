@@ -125,7 +125,6 @@
         .etf-table td { padding: 3px 2px; border-bottom: 1px solid #111827; }
         .etf-table td:first-child { text-align: center; color: #94a3b8; }
 
-        /* 週線圖統一放大適應高度 */
         .chart-box-md { height: 85px; width: 100%; position: relative; margin-top: 4px; }
 
         .footer { border-top: 1px solid #1e293b; margin-top: 12px; padding-top: 8px; font-size: 0.75rem; color: var(--text-sub); display: flex; justify-content: space-between; }
@@ -140,12 +139,13 @@
             <div class="sub-title">一張圖掌握全球金融市場動態</div>
         </div>
         <div class="header-meta">
-            <div class="date-badge">📅 2026/09/14 (一)</div>
+            <!-- 已加上 id 以便自動更新 -->
+            <div class="date-badge" id="todayBadge">📅 --/--/--</div>
             <div class="sub-title" id="updateTime">更新時間：--</div>
         </div>
     </div>
 
-    <!-- 第一列：三大核心指標 (改為完整週線圖顯示) -->
+    <!-- 第一列：三大核心指標 -->
     <div class="grid-3">
         <div class="card card-top">
             <div class="card-name">台股大盤 (週線)</div>
@@ -211,7 +211,7 @@
         </div>
     </div>
 
-    <!-- 第四列：VIX / 資券表格(中間) / 白底美債 -->
+    <!-- 第四列：VIX / 資券表格 / 美債 -->
     <div class="grid-3">
         <div class="card">
             <div class="card-name">S&P500 VIX (VIX)</div>
@@ -305,7 +305,6 @@
 <script>
     let chartInstances = {};
 
-    // 統一使用的詳細週線圖繪製函式（帶 X、Y 軸刻度與網格）
     function renderDetailChart(canvasId, chartData, color='#ef4444') {
         if (!chartData || chartData.length === 0) return;
         const ctx = document.getElementById(canvasId).getContext('2d');
@@ -345,11 +344,19 @@
             const res = await fetch('data.json?t=' + Date.now());
             const data = await res.json();
 
+            // 解析並自動更新日期與時間
             if (data.updated_at) {
                 document.getElementById('updateTime').innerText = `更新時間：${data.updated_at}`;
+
+                const rawDateStr = data.updated_at.split(' ')[0]; // 例: "2026-09-14"
+                const datePart = rawDateStr.replace(/-/g, '/');
+                const d = new Date(rawDateStr);
+                const dayMap = ['日', '一', '二', '三', '四', '五', '六'];
+                const dayName = isNaN(d.getDay()) ? '' : ` (${dayMap[d.getDay()]})`;
+
+                document.getElementById('todayBadge').innerText = `📅 ${datePart}${dayName}`;
             }
 
-            // 頂部 3 個指標
             const renderTopCard = (id, item) => {
                 if (!item || item.price === '--') return;
                 document.getElementById(`${id}-price`).innerText = item.price;
@@ -365,7 +372,6 @@
             renderTopCard('tsmc', data.tsmc);
             renderTopCard('etf6208', data.etf6208);
 
-            // 常規卡片
             const renderCard = (id, item, forceRed = false) => {
                 if (!item || item.price === '--') return;
                 const priceEl = document.getElementById(`${id}-price`);
@@ -388,7 +394,6 @@
             renderCard('fitx', data.fitx);
             renderCard('usdtwd', data.usdtwd, true);
 
-            // 恐懼指數
             if (data.fear) {
                 const score = parseInt(data.fear.score) || 31;
                 document.getElementById('fear-score').innerText = score;
@@ -397,7 +402,6 @@
                 document.getElementById('needle').setAttribute('y2', (50 - 32 * Math.sin(angle)).toFixed(1));
             }
 
-            // 渲染全卡片的詳細週線圖 (含 X、Y 軸刻度)
             if (data.charts) {
                 renderDetailChart('chart-twii', data.charts.twii, data.twii.raw_change >= 0 ? '#ef4444' : '#00e676');
                 renderDetailChart('chart-tsmc', data.charts.tsmc, data.tsmc.raw_change >= 0 ? '#ef4444' : '#00e676');
