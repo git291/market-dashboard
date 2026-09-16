@@ -3,9 +3,12 @@ name: Daily Market Scraper
 on:
   schedule:
     - cron: '0 22 * * *'  # 每日 06:00 AM (Taiwan)
-  workflow_dispatch:
+  workflow_dispatch:      # 允許手動點擊按鈕執行
+  push:
+    branches:
+      - main
+      - master            # 當推送程式碼至分支時同步觸發
 
-# 顯式宣告 GitHub Actions 的寫入權限
 permissions:
   contents: write
 
@@ -14,10 +17,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4  # 升級至 v4 解決 Node.js 警告
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v5  # 升級至 v5
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
