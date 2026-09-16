@@ -1,12 +1,12 @@
 {
-  "updated_at": "2026-09-16 03:37:23",
+  "updated_at": "2026-09-16 03:38:24",
   "twii": {
-    "price": "45,960.32",
-    "change": "+448.83",
-    "pChange": "+0.99%",
-    "week_pChange": "+0.99%",
+    "price": "45,976.33",
+    "change": "+464.84",
+    "pChange": "+1.02%",
+    "week_pChange": "+1.02%",
     "prev_close": "45,511.49",
-    "raw_change": 448.83203125
+    "raw_change": 464.83984375
   },
   "tsmc": {
     "price": "2,390.00",
@@ -25,12 +25,12 @@
     "raw_change": 0.95001220703125
   },
   "fitx": {
-    "price": "45,960.32",
-    "change": "+448.83",
-    "pChange": "+0.99%",
-    "week_pChange": "+0.99%",
+    "price": "45,976.33",
+    "change": "+464.84",
+    "pChange": "+1.02%",
+    "week_pChange": "+1.02%",
     "prev_close": "45,511.49",
-    "raw_change": 448.83203125
+    "raw_change": 464.83984375
   },
   "dji": {
     "price": "52,093.10",
@@ -71,18 +71,18 @@
   "usdtwd": {
     "price": "31.78",
     "change": "+0.06",
-    "pChange": "+0.18%",
-    "week_pChange": "+0.18%",
+    "pChange": "+0.19%",
+    "week_pChange": "+0.19%",
     "prev_close": "31.72",
-    "raw_change": 0.058399200439453125
+    "raw_change": 0.05940055847167969
   },
   "brent": {
-    "price": "107.59",
-    "change": "+1.91",
-    "pChange": "+1.81%",
-    "week_pChange": "+1.81%",
+    "price": "107.64",
+    "change": "+1.96",
+    "pChange": "+1.85%",
+    "week_pChange": "+1.85%",
     "prev_close": "105.68",
-    "raw_change": 1.9099960327148438
+    "raw_change": 1.9599990844726562
   },
   "bond": {
     "price": "5.00",
@@ -116,7 +116,7 @@
       },
       {
         "time": "09/16",
-        "price": 45960.32
+        "price": 45976.33
       }
     ],
     "tsmc": [
@@ -182,7 +182,7 @@
       },
       {
         "time": "09/16",
-        "price": 45960.32
+        "price": 45976.33
       }
     ],
     "dji": [
@@ -314,7 +314,7 @@
       },
       {
         "time": "09/15",
-        "price": 107.59
+        "price": 107.64
       }
     ],
     "bond": [
