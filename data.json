@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-16 00:15:40 (CST)",
+  "updated_at": "2026-09-16 00:16:02 (CST)",
   "twii": {
     "price": "45,862.52",
     "prev_close": "46,184.85",
@@ -109,15 +109,15 @@
     "prev": 17.1
   },
   "brent": {
-    "price": "108.27",
+    "price": "108.19",
     "prev_close": "105.68",
-    "change": 2.59,
-    "raw_change": 2.59,
-    "pChange": "2.45%",
-    "week_pChange": "+6.98%",
+    "change": 2.51,
+    "raw_change": 2.51,
+    "pChange": "2.38%",
+    "week_pChange": "+6.9%",
     "open": 108.55,
     "high": 108.55,
-    "low": 108.24,
+    "low": 108.19,
     "prev": 105.68
   },
   "bond": {
@@ -424,7 +424,7 @@
       },
       {
         "time": "09/15",
-        "price": 108.27
+        "price": 108.19
       }
     ]
   },
