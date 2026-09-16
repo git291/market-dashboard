@@ -144,7 +144,7 @@
         </div>
     </div>
 
-    <!-- 第一列：台股大盤與台指期近全 -->
+    <!-- 第一列 -->
     <div class="grid-2">
         <div class="card card-top">
             <div class="card-name">台股大盤 (週線)</div>
@@ -168,7 +168,7 @@
         </div>
     </div>
 
-    <!-- 第二列：美股三大指數 -->
+    <!-- 第二列 -->
     <div class="grid-3">
         <div class="card">
             <div class="card-name">道瓊指數</div>
@@ -187,7 +187,7 @@
         </div>
     </div>
 
-    <!-- 第三列：台積電與 006208 -->
+    <!-- 第三列 -->
     <div class="grid-2">
         <div class="card card-top">
             <div class="card-name">台積電 2330 (週線)</div>
@@ -209,7 +209,7 @@
         </div>
     </div>
 
-    <!-- 第四列：VIX / 資券表格 / 美債 -->
+    <!-- 第四列 -->
     <div class="grid-3">
         <div class="card">
             <div class="card-name">S&P500 VIX (VIX)</div>
@@ -249,7 +249,7 @@
         </div>
     </div>
 
-    <!-- 第五列：恐懼指針 / 台幣趨勢週線 / 布蘭特原油(日線) -->
+    <!-- 第五列 -->
     <div class="grid-3">
         <div class="card">
             <div class="card-name">恐懼與貪婪指數</div>
@@ -420,7 +420,7 @@
                 document.getElementById('bond-prev').innerText = `${data.bond.prev_close} %`;
             }
 
-            // 6. 動態渲染 資券進出行情表格 (完美修復版)
+            // 6. 動態渲染 資券進出行情表格
             if (data.margin_data && data.margin_data.length > 0) {
                 const tbody = document.getElementById('margin-tbody');
                 if (tbody) {
