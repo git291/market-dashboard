@@ -96,8 +96,8 @@
         .card-change { font-size: 0.75rem; font-weight: bold; margin-top: 2px; }
         .purple-line { border-bottom: 2px solid #a855f7; padding-bottom: 4px; }
 
-        .green { color: var(--down-green); }
-        .red { color: var(--up-red); }
+        .green { color: var(--down-green) !important; }
+        .red { color: var(--up-red) !important; }
 
         .trade-row { 
             display: flex; 
@@ -119,10 +119,10 @@
 
         .bond-value { font-size: 1.8rem; font-weight: 900; color: #fff; margin: 6px 0 2px 0; }
 
-        .etf-table-container { height: 110px; overflow-y: auto; }
+        .etf-table-container { height: 110px; overflow-y: auto; margin-top: 4px; }
         .etf-table { width: 100%; font-size: 0.65rem; border-collapse: collapse; text-align: right; }
-        .etf-table th { background: #0f172a; color: #94a3b8; padding: 3px 2px; position: sticky; top: 0; font-weight: normal; }
-        .etf-table td { padding: 3px 2px; border-bottom: 1px solid #111827; }
+        .etf-table th { background: #0f172a; color: #94a3b8; padding: 4px 2px; position: sticky; top: 0; font-weight: normal; }
+        .etf-table td { padding: 4px 2px; border-bottom: 1px solid #111827; }
         .etf-table td:first-child { text-align: center; color: #94a3b8; }
 
         .chart-box-md { height: 85px; width: 100%; position: relative; margin-top: 4px; }
@@ -161,8 +161,8 @@
             <div class="card-change green" id="fitx-change">--</div>
             <div class="trade-row">
                 <span>單：<b>1</b></span>
-                <span>買進：<b id="fitx-bid">45,546</b></span>
-                <span>賣出：<b id="fitx-ask">45,550</b></span>
+                <span>買進：<b id="fitx-bid">21,718</b></span>
+                <span>賣出：<b id="fitx-ask">21,722</b></span>
             </div>
             <div class="chart-box-md"><canvas id="chart-fitx"></canvas></div>
         </div>
@@ -234,8 +234,8 @@
                             <th>券餘額</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <!-- 由 JavaScript 動態填入數據 -->
+                    <tbody id="margin-tbody">
+                        <!-- 由 JavaScript 動態繪製 -->
                     </tbody>
                 </table>
             </div>
@@ -277,9 +277,9 @@
                 </div>
             </div>
             <div class="trade-row" style="margin-bottom: 2px;">
-                <span>單：<b>--</b></span>
-                <span>買進：<b id="usdtwd-bid">31.743</b></span>
-                <span>賣出：<b id="usdtwd-ask">31.843</b></span>
+                <span>單：<b>1</b></span>
+                <span>買進：<b id="usdtwd-bid">31.815</b></span>
+                <span>賣出：<b id="usdtwd-ask">31.825</b></span>
             </div>
             <div class="chart-box-md">
                 <canvas id="twdCanvas"></canvas>
@@ -311,7 +311,9 @@
 
     function renderDetailChart(canvasId, chartData, color='#ef4444') {
         if (!chartData || chartData.length === 0) return;
-        const ctx = document.getElementById(canvasId).getContext('2d');
+        const canvas = document.getElementById(canvasId);
+        if(!canvas) return;
+        const ctx = canvas.getContext('2d');
         
         if (chartInstances[canvasId]) chartInstances[canvasId].destroy();
 
@@ -348,7 +350,7 @@
             const res = await fetch('data.json?t=' + Date.now());
             const data = await res.json();
 
-            // 1. 更新時間與日期
+            // 1. 更新頂部時間
             if (data.updated_at) {
                 document.getElementById('updateTime').innerText = `更新時間：${data.updated_at}`;
 
@@ -361,7 +363,7 @@
                 document.getElementById('todayBadge').innerText = `📅 ${datePart}${dayName}`;
             }
 
-            // 2. 渲染頂部/焦點大卡片 (台股大盤、台積電、006208)
+            // 2. 渲染頂部/焦點大卡片
             const renderTopCard = (id, item) => {
                 if (!item || item.price === '--') return;
                 document.getElementById(`${id}-price`).innerText = item.price;
@@ -418,14 +420,14 @@
                 document.getElementById('bond-prev').innerText = `${data.bond.prev_close} %`;
             }
 
-            // 6. 動態渲染 資券進出行情表格
+            // 6. 動態渲染 資券進出行情表格 (完美修復版)
             if (data.margin_data && data.margin_data.length > 0) {
-                const tbody = document.querySelector('.etf-table tbody');
+                const tbody = document.getElementById('margin-tbody');
                 if (tbody) {
                     tbody.innerHTML = '';
                     data.margin_data.forEach(row => {
-                        const marginClass = row.margin_buy_sell.includes('-') ? 'green' : 'red';
-                        const shortClass = row.short_buy_sell.includes('-') ? 'green' : 'red';
+                        const marginClass = strHasMinus(row.margin_buy_sell) ? 'green' : 'red';
+                        const shortClass = strHasMinus(row.short_buy_sell) ? 'green' : 'red';
                         
                         const tr = document.createElement('tr');
                         tr.innerHTML = `
@@ -442,7 +444,7 @@
 
             // 7. 恐懼與貪婪指數繪製
             if (data.fear) {
-                const score = parseInt(data.fear.score) || 31;
+                const score = parseInt(data.fear.score) || 38;
                 document.getElementById('fear-score').innerText = score;
                 const angle = (score / 100) * Math.PI;
                 document.getElementById('needle').setAttribute('x2', (50 - 32 * Math.cos(angle)).toFixed(1));
@@ -467,6 +469,10 @@
         } catch (e) {
             console.error("同步失敗:", e);
         }
+    }
+
+    function strHasMinus(val) {
+        return String(val).includes('-');
     }
 
     loadData();
