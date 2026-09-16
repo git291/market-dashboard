@@ -4,49 +4,63 @@ from datetime import datetime
 
 def get_twse_margin_data():
     """爬取台灣證交所信用交易統計 (扣除ETF)"""
-    url = "https://www.twse.com.tw/rwd/zh/margin/MI_MARGN?response=json"
+    # 帶入 time 參數避免證交所 API 快取
+    url = f"https://www.twse.com.tw/rwd/zh/margin/MI_MARGN?response=json&_={int(datetime.now().timestamp())}"
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Referer': 'https://www.twse.com.tw/zh/page/trading/exchange/MI_MARGN.html'
     }
-    
-    # 預設備用資料 (防止休市或 API 異常時前端空白)
-    fallback_data = [
-        {"date": "09/15", "margin_buy_sell": "-12.5億", "short_buy_sell": "+1,200", "margin_balance": "2,650億", "short_balance": "32.5萬"},
-        {"date": "09/14", "margin_buy_sell": "+18.3億", "short_buy_sell": "-850", "margin_balance": "2,662億", "short_balance": "32.3萬"},
-        {"date": "09/13", "margin_buy_sell": "+5.2億", "short_buy_sell": "+3,100", "margin_balance": "2,644億", "short_balance": "32.4萬"}
-    ]
 
     try:
         res = requests.get(url, headers=headers, timeout=10)
         json_data = res.json()
         
-        if json_data.get('stat') != 'OK' or 'data' not in json_data:
-            print("TWSE API 回傳狀態非 OK，使用預設資料")
-            return fallback_data
+        # 檢查證交所回傳格式
+        if json_data.get('stat') != 'OK':
+            print("TWSE API 狀態異常：", json_data.get('stat'))
+            return get_fallback_data()
 
-        raw_rows = json_data.get('data', [])
+        # 證交所資料列表 (通常包含大盤總計與各類別)
+        tables = json_data.get('tables', [])
+        data_rows = []
+        
+        # 尋找「信用交易統計」或「扣除ETF」相關表格
+        for table in tables:
+            if 'data' in table:
+                data_rows = table['data']
+                break
+
+        if not data_rows and 'data' in json_data:
+            data_rows = json_data['data']
+
+        if not data_rows:
+            return get_fallback_data()
+
         result = []
-
-        for row in raw_rows[:5]:
+        # 解析最後 3 天的資料
+        for row in data_rows[-3:]:
+            # 安全轉換數字
             def parse_num(val):
                 try:
                     return float(str(val).replace(',', '').strip())
                 except:
                     return 0.0
 
-            date_str = str(row[0]).strip()
-            date_fmt = f"{date_str.split('/')[1]}/{date_str.split('/')[2]}" if '/' in date_str else date_str
+            # 日期處理 (例如: "113/09/15" -> "09/15")
+            raw_date = str(row[0]).strip()
+            date_parts = raw_date.split('/')
+            date_fmt = f"{date_parts[1]}/{date_parts[2]}" if len(date_parts) >= 3 else raw_date
 
-            # 抓取證交所正確欄位
+            # 解析資券數據 (根據證交所標準欄位索引)
             margin_diff = parse_num(row[5])   # 融資買賣超
-            margin_bal = parse_num(row[6])    # 融資餘額
+            margin_bal = parse_num(row[6])    # 融資餘額(千元/元)
             short_diff = parse_num(row[11])   # 融券買賣超
-            short_bal = parse_num(row[12])    # 融券餘額
+            short_bal = parse_num(row[12])    # 融券餘額(張)
 
-            margin_diff_str = f"+{margin_diff/100000000:.1f}億" if margin_diff > 0 else f"{margin_diff/100000000:.1f}億"
-            short_diff_str = f"+{int(short_diff):,}" if short_diff > 0 else f"{int(short_diff):,}"
-            
-            margin_bal_str = f"{round(margin_bal / 100000000, 1)}億"
+            # 格式化顯示 (億 / 張 / 萬)
+            margin_diff_str = f"{'+' if margin_diff > 0 else ''}{round(margin_diff / 100000000, 1)}億"
+            short_diff_str = f"{'+' if short_diff > 0 else ''}{int(short_diff):,}"
+            margin_bal_str = f"{round(margin_bal / 100000000, 0):,.0f}億"
             short_bal_str = f"{round(short_bal / 10000, 1)}萬"
 
             result.append({
@@ -56,10 +70,19 @@ def get_twse_margin_data():
                 'margin_balance': margin_bal_str,
                 'short_balance': short_bal_str
             })
-        return result if result else fallback_data
+
+        return list(reversed(result)) if result else get_fallback_data()
+
     except Exception as e:
         print(f"TWSE Fetch error: {e}")
-        return fallback_data
+        return get_fallback_data()
+
+def get_fallback_data():
+    return [
+        {"date": "09/15", "margin_buy_sell": "-12.5億", "short_buy_sell": "+1,200", "margin_balance": "2,650億", "short_balance": "32.5萬"},
+        {"date": "09/14", "margin_buy_sell": "+18.3億", "short_buy_sell": "-850", "margin_balance": "2,662億", "short_balance": "32.3萬"},
+        {"date": "09/13", "margin_buy_sell": "+5.2億", "short_buy_sell": "+3,100", "margin_balance": "2,644億", "short_balance": "32.4萬"}
+    ]
 
 def main():
     output = {
@@ -88,7 +111,7 @@ def main():
 
     with open('data.json', 'w', encoding='utf-8') as f:
         json.dump(output, f, ensure_ascii=False, indent=2)
-    print("data.json 更新完成！")
+    print("data.json 數據已成功寫入！")
 
 if __name__ == "__main__":
     main()
