@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-16 00:34:07 (CST)",
+  "updated_at": "2026-09-16 00:35:53 (CST)",
   "twii": {
     "price": "45,862.52",
     "prev_close": "46,184.85",
@@ -85,12 +85,12 @@
     "prev": 46184.85
   },
   "usdtwd": {
-    "price": "31.85",
+    "price": "31.82",
     "prev_close": "31.72",
-    "change": 0.13,
-    "raw_change": 0.13,
-    "pChange": "0.41%",
-    "week_pChange": "+1.22%",
+    "change": 0.1,
+    "raw_change": 0.1,
+    "pChange": "0.32%",
+    "week_pChange": "+1.13%",
     "open": 31.8,
     "high": 31.86,
     "low": 31.76,
@@ -109,12 +109,12 @@
     "prev": 17.1
   },
   "brent": {
-    "price": "107.86",
+    "price": "107.92",
     "prev_close": "105.68",
-    "change": 2.18,
-    "raw_change": 2.18,
-    "pChange": "2.06%",
-    "week_pChange": "+6.57%",
+    "change": 2.24,
+    "raw_change": 2.24,
+    "pChange": "2.12%",
+    "week_pChange": "+6.63%",
     "open": 108.55,
     "high": 108.55,
     "low": 107.65,
@@ -367,7 +367,7 @@
       },
       {
         "time": "09/16",
-        "price": 31.85
+        "price": 31.82
       }
     ],
     "brent": [
@@ -453,7 +453,7 @@
       },
       {
         "time": "09/15",
-        "price": 107.86
+        "price": 107.92
       }
     ]
   },
