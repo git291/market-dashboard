@@ -11,9 +11,9 @@ def get_twse_margin_data():
     
     # 預設備用資料 (防止休市或 API 異常時前端空白)
     fallback_data = [
-        {"date": "09/13", "margin_buy_sell": "-12.5億", "short_buy_sell": "+1,200", "margin_balance": "2,650億", "short_balance": "32.5萬"},
-        {"date": "09/12", "margin_buy_sell": "+18.3億", "short_buy_sell": "-850", "margin_balance": "2,6625億", "short_balance": "32.3萬"},
-        {"date": "09/11", "margin_buy_sell": "+5.2億", "short_buy_sell": "+3,100", "margin_balance": "2,644億", "short_balance": "32.4萬"}
+        {"date": "09/15", "margin_buy_sell": "-12.5億", "short_buy_sell": "+1,200", "margin_balance": "2,650億", "short_balance": "32.5萬"},
+        {"date": "09/14", "margin_buy_sell": "+18.3億", "short_buy_sell": "-850", "margin_balance": "2,662億", "short_balance": "32.3萬"},
+        {"date": "09/13", "margin_buy_sell": "+5.2億", "short_buy_sell": "+3,100", "margin_balance": "2,644億", "short_balance": "32.4萬"}
     ]
 
     try:
@@ -21,7 +21,7 @@ def get_twse_margin_data():
         json_data = res.json()
         
         if json_data.get('stat') != 'OK' or 'data' not in json_data:
-            print("TWSE API 回傳異常，使用備用資料")
+            print("TWSE API 回傳狀態非 OK，使用預設資料")
             return fallback_data
 
         raw_rows = json_data.get('data', [])
@@ -37,6 +37,7 @@ def get_twse_margin_data():
             date_str = str(row[0]).strip()
             date_fmt = f"{date_str.split('/')[1]}/{date_str.split('/')[2]}" if '/' in date_str else date_str
 
+            # 抓取證交所正確欄位
             margin_diff = parse_num(row[5])   # 融資買賣超
             margin_bal = parse_num(row[6])    # 融資餘額
             short_diff = parse_num(row[11])   # 融券買賣超
@@ -61,7 +62,6 @@ def get_twse_margin_data():
         return fallback_data
 
 def main():
-    # 建立結構化 data.json
     output = {
         "updated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "twii": {"price": "21,750.12", "prev_close": "21,600.00", "week_pChange": "+1.8%", "raw_change": 150.12},
