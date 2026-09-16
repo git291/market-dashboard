@@ -41,18 +41,60 @@ def get_fear_and_greed():
         return {'score': 31, 'rating': '恐懼'}
 
 
+def get_twse_margin_data():
+    """爬取台灣證交所信用交易統計 (扣除ETF)"""
+    url = 'https://www.twse.com.tw/rwd/zh/margin/MI_MARGN?response=json'
+    headers = {
+        'User-Agent': (
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+        )
+    }
+    try:
+        res = requests.get(url, headers=headers, timeout=10)
+        json_data = res.json()
+
+        if json_data.get('stat') != 'OK':
+            return []
+
+        # 取得數據列表
+        raw_rows = json_data.get('data', [])
+        result = []
+
+        # 抓取最新前 6 筆交易日資料
+        for row in raw_rows[:6]:
+            date_str = row[0]  # 例: "113/09/14"
+            date_fmt = (
+                f"{date_str.split('/')[1]}/{date_str.split('/')[2]}"
+                if '/' in date_str
+                else date_str
+            )
+
+            # 融資買賣超與餘額 (單位: 仟元/張)
+            # 依證交所欄位格式解析
+            result.append({
+                'date': date_fmt,
+                'margin_buy_sell': row[5],  # 融資買賣超
+                'short_buy_sell': row[11],  # 融券買賣超
+                'margin_balance': (
+                    f'{round(float(row[6].replace(",", "")) / 100000000, 2)}億'
+                ),  # 融資餘額 (億)
+                'short_balance': (
+                    f'{round(float(row[12].replace(",", "")) / 10000, 2)}萬'
+                ),  # 融券餘額 (萬張)
+            })
+        return result
+    except Exception as e:
+        print(f'TWSE Margin fetch error: {e}')
+        return []
+
+
 def fetch_chart_data(ticker_symbol, is_daily=False):
-    """抓取歷史點位，is_daily=True 抓日線（1個月），否則抓週線抽樣（3個月）"""
     try:
         t = yf.Ticker(ticker_symbol)
         period = '1mo' if is_daily else '3mo'
         hist = t.history(period=period).dropna(subset=['Close'])
 
-        if is_daily:
-            sampled = hist  # 日線保留每日點位
-        else:
-            sampled = hist.iloc[::5]  # 週線抽樣
-
+        sampled = hist if is_daily else hist.iloc[::5]
         chart_data = []
         for idx, row in sampled.iterrows():
             chart_data.append(
@@ -89,7 +131,7 @@ def fetch_market_data():
         'usdtwd': 'TWD=X',
         'vix': '^VIX',
         'brent': 'BZ=F',
-        'bond': '^TNX',
+        'bond': '^TNX',  # 美國10年期公債殖利率
     }
 
     results = {
@@ -142,19 +184,18 @@ def fetch_market_data():
                     'pChange': '--',
                     'week_pChange': '--',
                     'raw_change': 0,
+                    'open': '--',
+                    'high': '--',
+                    'low': '--',
+                    'prev': '--',
                 }
         except Exception as e:
             print(f'Error fetching {key}: {e}')
-            results[key] = {
-                'price': '--',
-                'prev_close': '--',
-                'change': '--',
-                'pChange': '--',
-                'week_pChange': '--',
-                'raw_change': 0,
-            }
 
-    # 圖表資料 (原油改為日線 is_daily=True)
+    # 抓取信用交易統計
+    results['margin_data'] = get_twse_margin_data()
+
+    # 圖表資料
     results['charts'] = {
         'twii': fetch_chart_data('^TWII', is_daily=False),
         'tsmc': fetch_chart_data('2330.TW', is_daily=False),
