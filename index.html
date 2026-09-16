@@ -139,14 +139,13 @@
             <div class="sub-title">一張圖掌握全球金融市場動態</div>
         </div>
         <div class="header-meta">
-            <!-- 已加上 id 以便自動更新 -->
             <div class="date-badge" id="todayBadge">📅 --/--/--</div>
             <div class="sub-title" id="updateTime">更新時間：--</div>
         </div>
     </div>
 
-    <!-- 第一列：三大核心指標 -->
-    <div class="grid-3">
+    <!-- 第一列：台股大盤、台指期近全 (已與台積電/006208對調位置) -->
+    <div class="grid-2">
         <div class="card card-top">
             <div class="card-name">台股大盤 (週線)</div>
             <div class="card-price red" id="twii-price">--</div>
@@ -157,22 +156,15 @@
             <div class="chart-box-md"><canvas id="chart-twii"></canvas></div>
         </div>
         <div class="card card-top">
-            <div class="card-name">台積電 2330 (週線)</div>
-            <div class="card-price red" id="tsmc-price">--</div>
+            <div class="card-name">台指期近全</div>
+            <div class="card-price green" id="fitx-price">--</div>
+            <div class="card-change green" id="fitx-change">--</div>
             <div class="trade-row">
-                <span>昨收：<b id="tsmc-prev">--</b></span>
-                <span>週線：<b id="tsmc-week">--</b></span>
+                <span>單：<b>1</b></span>
+                <span>買進：<b id="fitx-bid">45,546</b></span>
+                <span>賣出：<b id="fitx-ask">45,550</b></span>
             </div>
-            <div class="chart-box-md"><canvas id="chart-tsmc"></canvas></div>
-        </div>
-        <div class="card card-top">
-            <div class="card-name">富邦台50 006208 (週線)</div>
-            <div class="card-price red" id="etf6208-price">--</div>
-            <div class="trade-row">
-                <span>昨收：<b id="etf6208-prev">--</b></span>
-                <span>週線：<b id="etf6208-week">--</b></span>
-            </div>
-            <div class="chart-box-md"><canvas id="chart-etf6208"></canvas></div>
+            <div class="chart-box-md"><canvas id="chart-fitx"></canvas></div>
         </div>
     </div>
 
@@ -195,19 +187,25 @@
         </div>
     </div>
 
-    <!-- 第三列：台指期與台幣 -->
+    <!-- 第三列：台積電 & 006208 (原在第一列) -->
     <div class="grid-2">
-        <div class="card">
-            <div class="card-name">台指期近全</div>
-            <div class="card-price green" id="fitx-price">--</div>
-            <div class="card-change green" id="fitx-change">--</div>
-            <div class="trade-row"><span>單：<b>1</b></span><span>買進：<b id="fitx-bid">45,546</b></span><span>賣出：<b id="fitx-ask">45,550</b></span></div>
+        <div class="card card-top">
+            <div class="card-name">台積電 2330 (週線)</div>
+            <div class="card-price red" id="tsmc-price">--</div>
+            <div class="trade-row">
+                <span>昨收：<b id="tsmc-prev">--</b></span>
+                <span>週線：<b id="tsmc-week">--</b></span>
+            </div>
+            <div class="chart-box-md"><canvas id="chart-tsmc"></canvas></div>
         </div>
-        <div class="card">
-            <div class="card-name">台幣</div>
-            <div class="card-price red" id="usdtwd-price">--</div>
-            <div class="card-change red" id="usdtwd-change">--</div>
-            <div class="trade-row"><span>單：<b>--</b></span><span>買進：<b id="usdtwd-bid">31.743</b></span><span>賣出：<b id="usdtwd-ask">31.843</b></span></div>
+        <div class="card card-top">
+            <div class="card-name">富邦台50 006208 (週線)</div>
+            <div class="card-price red" id="etf6208-price">--</div>
+            <div class="trade-row">
+                <span>昨收：<b id="etf6208-prev">--</b></span>
+                <span>週線：<b id="etf6208-week">--</b></span>
+            </div>
+            <div class="chart-box-md"><canvas id="chart-etf6208"></canvas></div>
         </div>
     </div>
 
@@ -256,7 +254,7 @@
         </div>
     </div>
 
-    <!-- 第五列：恐懼指針 / 台幣週線圖 / 布蘭特原油週線圖 -->
+    <!-- 第五列：恐懼指針 / 整合後的台幣趨勢週線 / 布蘭特原油(日線) -->
     <div class="grid-3">
         <div class="card">
             <div class="card-name">恐懼與貪婪指數</div>
@@ -275,20 +273,33 @@
             <div style="font-size:0.75rem; color:var(--text-sub);">市場即時情緒指標 ❓</div>
         </div>
 
+        <!-- 台幣與台幣趨勢週線整合 -->
         <div class="card" style="padding: 6px;">
-            <div class="card-name" style="text-align:left; font-size:0.8rem; display:flex; justify-content:space-between;">
+            <div class="card-name" style="text-align:left; font-size:0.8rem; display:flex; justify-content:space-between; align-items:center;">
                 <span>台幣趨勢週線</span>
-                <span id="chart-twd-price" style="color:#ef4444;">--</span>
+                <div>
+                    <span id="usdtwd-price" class="red" style="font-weight:900; font-size:1rem;">--</span>
+                    <span id="usdtwd-change" class="red" style="font-size:0.7rem; margin-left:4px;">--</span>
+                </div>
+            </div>
+            <div class="trade-row" style="margin-bottom: 2px;">
+                <span>單：<b>--</b></span>
+                <span>買進：<b id="usdtwd-bid">31.743</b></span>
+                <span>賣出：<b id="usdtwd-ask">31.843</b></span>
             </div>
             <div class="chart-box-md">
                 <canvas id="twdCanvas"></canvas>
             </div>
         </div>
 
+        <!-- 布蘭特原油 (改為日線) -->
         <div class="card" style="padding: 6px;">
-            <div class="card-name" style="text-align:left; font-size:0.8rem; display:flex; justify-content:space-between;">
-                <span>布蘭特原油 (週線)</span>
-                <span id="brent-price" style="color:#ef4444;">--</span>
+            <div class="card-name" style="text-align:left; font-size:0.8rem; display:flex; justify-content:space-between; align-items:center;">
+                <span>布蘭特原油 (日線)</span>
+                <div>
+                    <span id="brent-price" class="red" style="font-weight:900; font-size:1rem;">--</span>
+                    <span id="brent-change" class="red" style="font-size:0.7rem; margin-left:4px;">--</span>
+                </div>
             </div>
             <div class="chart-box-md">
                 <canvas id="brentCanvas"></canvas>
@@ -332,7 +343,7 @@
                 maintainAspectRatio: false,
                 plugins: { legend: { display: false } },
                 scales: {
-                    x: { ticks: { color: '#64748b', font: { size: 8 }, maxTicksLimit: 4 }, grid: { display: false } },
+                    x: { ticks: { color: '#64748b', font: { size: 8 }, maxTicksLimit: 5 }, grid: { display: false } },
                     y: { ticks: { color: '#64748b', font: { size: 8 } }, grid: { color: '#111827' } }
                 }
             }
@@ -344,11 +355,10 @@
             const res = await fetch('data.json?t=' + Date.now());
             const data = await res.json();
 
-            // 解析並自動更新日期與時間
             if (data.updated_at) {
                 document.getElementById('updateTime').innerText = `更新時間：${data.updated_at}`;
 
-                const rawDateStr = data.updated_at.split(' ')[0]; // 例: "2026-09-14"
+                const rawDateStr = data.updated_at.split(' ')[0];
                 const datePart = rawDateStr.replace(/-/g, '/');
                 const d = new Date(rawDateStr);
                 const dayMap = ['日', '一', '二', '三', '四', '五', '六'];
@@ -363,9 +373,11 @@
                 document.getElementById(`${id}-prev`).innerText = item.prev_close;
                 
                 const weekEl = document.getElementById(`${id}-week`);
-                weekEl.innerText = item.week_pChange;
-                const isUp = item.week_pChange.includes('+');
-                weekEl.className = isUp ? 'red' : 'green';
+                if (weekEl) {
+                    weekEl.innerText = item.week_pChange;
+                    const isUp = item.week_pChange.includes('+');
+                    weekEl.className = isUp ? 'red' : 'green';
+                }
             };
 
             renderTopCard('twii', data.twii);
@@ -377,21 +389,23 @@
                 const priceEl = document.getElementById(`${id}-price`);
                 const changeEl = document.getElementById(`${id}-change`);
                 
-                priceEl.innerText = item.price;
-                const isUp = item.raw_change > 0;
-                
-                const colorClass = forceRed ? 'red' : (isUp ? 'red' : 'green');
-                priceEl.className = `card-price ${colorClass}`;
+                if (priceEl) {
+                    priceEl.innerText = item.price;
+                    const isUp = item.raw_change > 0;
+                    const colorClass = forceRed ? 'red' : (isUp ? 'red' : 'green');
+                    priceEl.className = `${priceEl.className.replace(/red|green/g, '')} ${colorClass}`;
+                }
 
                 if (changeEl) {
+                    const isUp = item.raw_change > 0;
+                    const colorClass = forceRed ? 'red' : (isUp ? 'red' : 'green');
                     const arrow = (isUp || forceRed) ? '▲' : '▼';
                     changeEl.innerText = `${arrow} ${Math.abs(item.change)} (${item.pChange})`;
-                    changeEl.className = `card-change ${colorClass}`;
+                    changeEl.className = `${changeEl.className.replace(/red|green/g, '')} ${colorClass}`;
                 }
             };
 
-            ['dji', 'ixic', 'sox', 'vix', 'brent'].forEach(k => renderCard(k, data[k]));
-            renderCard('fitx', data.fitx);
+            ['dji', 'ixic', 'sox', 'vix', 'brent', 'fitx'].forEach(k => renderCard(k, data[k]));
             renderCard('usdtwd', data.usdtwd, true);
 
             if (data.fear) {
@@ -403,16 +417,16 @@
             }
 
             if (data.charts) {
-                renderDetailChart('chart-twii', data.charts.twii, data.twii.raw_change >= 0 ? '#ef4444' : '#00e676');
-                renderDetailChart('chart-tsmc', data.charts.tsmc, data.tsmc.raw_change >= 0 ? '#ef4444' : '#00e676');
-                renderDetailChart('chart-etf6208', data.charts.etf6208, data.etf6208.raw_change >= 0 ? '#ef4444' : '#00e676');
+                renderDetailChart('chart-twii', data.charts.twii, data.twii?.raw_change >= 0 ? '#ef4444' : '#00e676');
+                renderDetailChart('chart-fitx', data.charts.twii, data.fitx?.raw_change >= 0 ? '#ef4444' : '#00e676');
+                renderDetailChart('chart-tsmc', data.charts.tsmc, data.tsmc?.raw_change >= 0 ? '#ef4444' : '#00e676');
+                renderDetailChart('chart-etf6208', data.charts.etf6208, data.etf6208?.raw_change >= 0 ? '#ef4444' : '#00e676');
                 
                 if (data.charts.twd) {
-                    document.getElementById('chart-twd-price').innerText = data.charts.twd.slice(-1)[0]?.price || '--';
                     renderDetailChart('twdCanvas', data.charts.twd, '#eab308');
                 }
                 if (data.charts.brent) {
-                    renderDetailChart('brentCanvas', data.charts.brent, '#ef4444');
+                    renderDetailChart('brentCanvas', data.charts.brent, data.brent?.raw_change >= 0 ? '#ef4444' : '#00e676');
                 }
             }
 
