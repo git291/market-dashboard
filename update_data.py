@@ -1,119 +1,153 @@
 import json
 import requests
 from datetime import datetime
+import yfinance as yf
 
-def get_twse_margin_data():
-    """動態抓取證交所最新資券資料並自動格式化"""
-    url = f"https://www.twse.com.tw/rwd/zh/margin/MI_MARGN?response=json&_={int(datetime.now().timestamp())}"
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        'Referer': 'https://www.twse.com.tw/zh/page/trading/exchange/MI_MARGN.html'
+def fetch_real_data():
+    """使用 yfinance 動態抓取全球最新市場真實數據"""
+    symbols = {
+        'twii': '^TWII',        # 台股加權指數
+        'tsmc': '2330.TW',      # 台積電
+        'etf6208': '006208.TW',  # 富邦台50
+        'fitx': '^TWII',        # 台指期 (以加權指數走勢替代)
+        'dji': '^DJI',          # 道瓊
+        'ixic': '^IXIC',        # 那斯達克
+        'sox': '^SOX',          # 費半
+        'vix': '^VIX',          # VIX
+        'usdtwd': 'TWD=X',      # 美元台幣
+        'brent': 'BZ=F',        # 布蘭特原油
+        'bond': '^TNX'          # 美國10年期公債
     }
 
+    market_data = {}
+    charts_data = {}
+
+    for key, sym in symbols.items():
+        try:
+            ticker = yf.Ticker(sym)
+            hist = ticker.history(period="7d")
+
+            if not hist.empty and len(hist) >= 2:
+                latest = hist.iloc[-1]
+                prev = hist.iloc[-2]
+
+                price = float(latest['Close'])
+                prev_close = float(prev['Close'])
+                change = price - prev_close
+                p_change = (change / prev_close) * 100
+
+                # 價格格式化
+                if price >= 1000:
+                    price_str = f"{price:,.2f}"
+                    prev_str = f"{prev_close:,.2f}"
+                else:
+                    price_str = f"{price:.2f}"
+                    prev_str = f"{prev_close:.2f}"
+
+                market_data[key] = {
+                    "price": price_str,
+                    "change": f"{change:+.2f}",
+                    "pChange": f"{p_change:+.2f}%",
+                    "week_pChange": f"{p_change:+.2f}%",
+                    "prev_close": prev_str,
+                    "raw_change": change
+                }
+
+                # 自動提取真實近 5 日圖表走勢
+                chart_points = []
+                for idx, row in hist.tail(5).iterrows():
+                    chart_points.append({
+                        "time": idx.strftime("%m/%d"),
+                        "price": round(float(row['Close']), 2)
+                    })
+                charts_data[key] = chart_points
+            else:
+                market_data[key] = {"price": "--", "change": "--", "pChange": "--", "raw_change": 0}
+        except Exception as e:
+            print(f"Fetch error on {key} ({sym}): {e}")
+            market_data[key] = {"price": "--", "change": "--", "pChange": "--", "raw_change": 0}
+
+    # 補充 VIX 開高低收
+    try:
+        vix_hist = yf.Ticker('^VIX').history(period="2d").iloc[-1]
+        if 'vix' in market_data:
+            market_data['vix'].update({
+                "open": f"{vix_hist['Open']:.2f}",
+                "high": f"{vix_hist['High']:.2f}",
+                "low": f"{vix_hist['Low']:.2f}",
+                "prev": market_data['vix']['prev_close']
+            })
+    except Exception as e:
+        print(f"VIX details error: {e}")
+
+    return market_data, charts_data
+
+def fetch_twse_margin():
+    """抓取證交所真實資券資料"""
+    url = f"https://www.twse.com.tw/rwd/zh/margin/MI_MARGN?response=json&_={int(datetime.now().timestamp())}"
+    headers = {'User-Agent': 'Mozilla/5.0'}
     try:
         res = requests.get(url, headers=headers, timeout=10)
         json_data = res.json()
-        
-        if json_data.get('stat') != 'OK':
-            print("TWSE API 回傳非 OK，改用當前日期動態生成最新數據")
-            return generate_dynamic_data()
+        if json_data.get('stat') == 'OK':
+            raw_rows = json_data.get('data', [])
+            if not raw_rows and 'tables' in json_data:
+                for t in json_data['tables']:
+                    if t.get('data'):
+                        raw_rows = t['data']
+                        break
+            
+            result = []
+            for row in raw_rows[-3:]:
+                def parse_num(v):
+                    try: return float(str(v).replace(',', '').strip())
+                    except: return 0.0
 
-        # 取得資料陣列
-        raw_rows = json_data.get('data', [])
-        if not raw_rows and 'tables' in json_data:
-            for t in json_data['tables']:
-                if 'data' in t and len(t['data']) > 0:
-                    raw_rows = t['data']
-                    break
+                date_str = str(row[0]).strip()
+                d_parts = date_str.split('/')
+                date_fmt = f"{int(d_parts[1]):02d}/{int(d_parts[2]):02d}" if len(d_parts) == 3 else date_str
 
-        if not raw_rows:
-            return generate_dynamic_data()
+                m_diff, m_bal = parse_num(row[5]), parse_num(row[6])
+                s_diff, s_bal = parse_num(row[11]), parse_num(row[12])
 
-        result = []
-        # 取最新的 5 筆交易日資料
-        for row in raw_rows[-5:]:
-            def parse_num(val):
-                try:
-                    return float(str(val).replace(',', '').strip())
-                except:
-                    return 0.0
-
-            # 證交所日期處理：例如 "115/09/16" -> "09/16"
-            date_str = str(row[0]).strip()
-            date_parts = date_str.split('/')
-            if len(date_parts) == 3:
-                date_fmt = f"{int(date_parts[1]):02d}/{int(date_parts[2]):02d}"
-            else:
-                date_fmt = date_str
-
-            margin_diff = parse_num(row[5])   # 融資買賣超
-            margin_bal = parse_num(row[6])    # 融資餘額
-            short_diff = parse_num(row[11])   # 融券買賣超
-            short_bal = parse_num(row[12])    # 融券餘額
-
-            margin_diff_str = f"{'+' if margin_diff > 0 else ''}{round(margin_diff / 100000000, 1)}億"
-            short_diff_str = f"{'+' if short_diff > 0 else ''}{int(short_diff):,}"
-            margin_bal_str = f"{round(margin_bal / 100000000, 0):,.0f}億" if margin_bal > 1000000 else f"{round(margin_bal / 10000, 1)}萬"
-            short_bal_str = f"{round(short_bal / 10000, 1)}萬"
-
-            result.append({
-                'date': date_fmt,
-                'margin_buy_sell': margin_diff_str,
-                'short_buy_sell': short_diff_str,
-                'margin_balance': margin_bal_str,
-                'short_balance': short_bal_str
-            })
-
-        # 最新日期排在最上面
-        return list(reversed(result))
-
+                result.append({
+                    'date': date_fmt,
+                    'margin_buy_sell': f"{'+' if m_diff > 0 else ''}{round(m_diff / 100000000, 1)}億",
+                    'short_buy_sell': f"{'+' if s_diff > 0 else ''}{int(s_diff):,}",
+                    'margin_balance': f"{round(m_bal / 100000000, 0):,.0f}億" if m_bal > 1000000 else f"{round(m_bal / 10000, 1)}萬",
+                    'short_balance': f"{round(s_bal / 10000, 1)}萬"
+                })
+            return list(reversed(result))
     except Exception as e:
-        print(f"TWSE Fetch error: {e}")
-        return generate_dynamic_data()
-
-def generate_dynamic_data():
-    """當 API 沒回應或休市時，自動根據當前系統日期產生最新的備用時間序"""
-    now = datetime.now()
-    month = now.strftime("%m")
-    day = now.day
-    
-    return [
-        {"date": f"{month}/{day:02d}", "margin_buy_sell": "-12.5億", "short_buy_sell": "+1,200", "margin_balance": "2,650億", "short_balance": "32.5萬"},
-        {"date": f"{month}/{day-1:02d}", "margin_buy_sell": "+18.3億", "short_buy_sell": "-850", "margin_balance": "2,662億", "short_balance": "32.3萬"},
-        {"date": f"{month}/{day-2:02d}", "margin_buy_sell": "+5.2億", "short_buy_sell": "+3,100", "margin_balance": "2,644億", "short_balance": "32.4萬"}
-    ]
+        print(f"Margin error: {e}")
+    return []
 
 def main():
-    now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    today_md = datetime.now().strftime("%m/%d")
+    print("開始抓取全球即時市場數據...")
+    m_data, c_data = fetch_real_data()
+    margin_data = fetch_twse_margin()
 
     output = {
-        "updated_at": now_str,
-        "twii": {"price": "21,750.12", "prev_close": "21,600.00", "week_pChange": "+1.8%", "raw_change": 150.12},
-        "tsmc": {"price": "940.0", "prev_close": "930.0", "week_pChange": "+2.1%", "raw_change": 10.0},
-        "etf6208": {"price": "102.50", "prev_close": "101.20", "week_pChange": "+1.2%", "raw_change": 1.3},
-        "fitx": {"price": "21,720", "change": "130", "pChange": "+0.60%", "raw_change": 130},
-        "dji": {"price": "40,836.44", "change": "-234.21", "pChange": "-0.57%", "raw_change": -234.21},
-        "ixic": {"price": "16,884.60", "change": "-98.45", "pChange": "-0.58%", "raw_change": -98.45},
-        "sox": {"price": "4,578.12", "change": "-42.10", "pChange": "-0.91%", "raw_change": -42.10},
-        "vix": {"price": "19.45", "change": "1.20", "pChange": "+6.58%", "raw_change": 1.20, "open": "18.50", "high": "20.10", "low": "18.20", "prev": "18.25"},
-        "usdtwd": {"price": "31.820", "change": "0.05", "pChange": "+0.16%", "raw_change": 0.05},
-        "brent": {"price": "72.60", "change": "-0.85", "pChange": "-1.16%", "raw_change": -0.85},
-        "bond": {"price": "3.65", "prev_close": "3.68"},
+        "updated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "twii": m_data.get("twii", {}),
+        "tsmc": m_data.get("tsmc", {}),
+        "etf6208": m_data.get("etf6208", {}),
+        "fitx": m_data.get("fitx", {}),
+        "dji": m_data.get("dji", {}),
+        "ixic": m_data.get("ixic", {}),
+        "sox": m_data.get("sox", {}),
+        "vix": m_data.get("vix", {}),
+        "usdtwd": m_data.get("usdtwd", {}),
+        "brent": m_data.get("brent", {}),
+        "bond": m_data.get("bond", {}),
         "fear": {"score": "38"},
-        "margin_data": get_twse_margin_data(),
-        "charts": {
-            "twii": [{"time": "09/12", "price": 21300}, {"time": "09/13", "price": 21450}, {"time": "09/15", "price": 21600}, {"time": today_md, "price": 21750}],
-            "tsmc": [{"time": "09/12", "price": 910}, {"time": "09/13", "price": 920}, {"time": "09/15", "price": 930}, {"time": today_md, "price": 940}],
-            "etf6208": [{"time": "09/12", "price": 99.5}, {"time": "09/13", "price": 100.2}, {"time": "09/15", "price": 101.2}, {"time": today_md, "price": 102.5}],
-            "twd": [{"time": "09/12", "price": 32.1}, {"time": "09/13", "price": 32.0}, {"time": "09/15", "price": 31.9}, {"time": today_md, "price": 31.82}],
-            "brent": [{"time": "09/12", "price": 75.2}, {"time": "09/13", "price": 74.0}, {"time": "09/15", "price": 73.1}, {"time": today_md, "price": 72.6}]
-        }
+        "margin_data": margin_data,
+        "charts": c_data
     }
 
     with open('data.json', 'w', encoding='utf-8') as f:
         json.dump(output, f, ensure_ascii=False, indent=2)
-    print(f"data.json 更新完成！最新日期：{today_md}")
+    print("實時資料已寫入 data.json！")
 
 if __name__ == "__main__":
     main()
