@@ -41,12 +41,18 @@ def get_fear_and_greed():
         return {'score': 31, 'rating': '恐懼'}
 
 
-def fetch_chart_data(ticker_symbol):
-    """抓取近3個月歷史週線點位"""
+def fetch_chart_data(ticker_symbol, is_daily=False):
+    """抓取歷史點位，is_daily=True 抓日線（1個月），否則抓週線抽樣（3個月）"""
     try:
         t = yf.Ticker(ticker_symbol)
-        hist = t.history(period='3mo').dropna(subset=['Close'])
-        sampled = hist.iloc[::5]  # 隔5個交易日抽樣
+        period = '1mo' if is_daily else '3mo'
+        hist = t.history(period=period).dropna(subset=['Close'])
+
+        if is_daily:
+            sampled = hist  # 日線保留每日點位
+        else:
+            sampled = hist.iloc[::5]  # 週線抽樣
+
         chart_data = []
         for idx, row in sampled.iterrows():
             chart_data.append(
@@ -55,7 +61,10 @@ def fetch_chart_data(ticker_symbol):
 
         latest_idx = hist.index[-1]
         latest_row = hist.iloc[-1]
-        if chart_data[-1]['time'] != latest_idx.strftime('%m/%d'):
+        if (
+            chart_data
+            and chart_data[-1]['time'] != latest_idx.strftime('%m/%d')
+        ):
             chart_data.append(
                 {
                     'time': latest_idx.strftime('%m/%d'),
@@ -145,13 +154,13 @@ def fetch_market_data():
                 'raw_change': 0,
             }
 
-    # 抓取週線圖表資料 (大盤、台積電、006208、台幣、布蘭特原油)
+    # 圖表資料 (原油改為日線 is_daily=True)
     results['charts'] = {
-        'twii': fetch_chart_data('^TWII'),
-        'tsmc': fetch_chart_data('2330.TW'),
-        'etf6208': fetch_chart_data('006208.TW'),
-        'twd': fetch_chart_data('TWD=X'),
-        'brent': fetch_chart_data('BZ=F'),
+        'twii': fetch_chart_data('^TWII', is_daily=False),
+        'tsmc': fetch_chart_data('2330.TW', is_daily=False),
+        'etf6208': fetch_chart_data('006208.TW', is_daily=False),
+        'twd': fetch_chart_data('TWD=X', is_daily=False),
+        'brent': fetch_chart_data('BZ=F', is_daily=True),
     }
 
     results['fear'] = get_fear_and_greed()
