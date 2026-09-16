@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-16 02:56:42",
+  "updated_at": "2026-09-16 03:23:47",
   "twii": {
     "price": "21,750.12",
     "prev_close": "21,600.00",
@@ -73,21 +73,21 @@
   },
   "margin_data": [
     {
-      "date": "09/15",
+      "date": "09/16",
       "margin_buy_sell": "-12.5億",
       "short_buy_sell": "+1,200",
       "margin_balance": "2,650億",
       "short_balance": "32.5萬"
     },
     {
-      "date": "09/14",
+      "date": "09/15",
       "margin_buy_sell": "+18.3億",
       "short_buy_sell": "-850",
       "margin_balance": "2,662億",
       "short_balance": "32.3萬"
     },
     {
-      "date": "09/13",
+      "date": "09/14",
       "margin_buy_sell": "+5.2億",
       "short_buy_sell": "+3,100",
       "margin_balance": "2,644億",
@@ -97,91 +97,91 @@
   "charts": {
     "twii": [
       {
-        "time": "09/09",
+        "time": "09/12",
         "price": 21300
       },
       {
-        "time": "09/10",
+        "time": "09/13",
         "price": 21450
       },
       {
-        "time": "09/11",
+        "time": "09/15",
         "price": 21600
       },
       {
-        "time": "09/12",
+        "time": "09/16",
         "price": 21750
       }
     ],
     "tsmc": [
       {
-        "time": "09/09",
+        "time": "09/12",
         "price": 910
       },
       {
-        "time": "09/10",
+        "time": "09/13",
         "price": 920
       },
       {
-        "time": "09/11",
+        "time": "09/15",
         "price": 930
       },
       {
-        "time": "09/12",
+        "time": "09/16",
         "price": 940
       }
     ],
     "etf6208": [
       {
-        "time": "09/09",
+        "time": "09/12",
         "price": 99.5
       },
       {
-        "time": "09/10",
+        "time": "09/13",
         "price": 100.2
       },
       {
-        "time": "09/11",
+        "time": "09/15",
         "price": 101.2
       },
       {
-        "time": "09/12",
+        "time": "09/16",
         "price": 102.5
       }
     ],
     "twd": [
       {
-        "time": "09/09",
+        "time": "09/12",
         "price": 32.1
       },
       {
-        "time": "09/10",
+        "time": "09/13",
         "price": 32.0
       },
       {
-        "time": "09/11",
+        "time": "09/15",
         "price": 31.9
       },
       {
-        "time": "09/12",
+        "time": "09/16",
         "price": 31.82
       }
     ],
     "brent": [
       {
-        "time": "09/09",
+        "time": "09/12",
         "price": 75.2
       },
       {
-        "time": "09/10",
+        "time": "09/13",
         "price": 74.0
       },
       {
-        "time": "09/11",
+        "time": "09/15",
         "price": 73.1
       },
       {
-        "time": "09/12",
+        "time": "09/16",
         "price": 72.6
       }
     ]
