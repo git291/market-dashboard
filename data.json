@@ -1,12 +1,12 @@
 {
-  "updated_at": "2026-09-16 05:05:36",
+  "updated_at": "2026-09-16 05:14:48",
   "twii": {
-    "price": "45,760.61",
-    "change": "+249.12",
-    "pChange": "+0.55%",
-    "week_pChange": "+0.55%",
+    "price": "45,842.95",
+    "change": "+331.46",
+    "pChange": "+0.73%",
+    "week_pChange": "+0.73%",
     "prev_close": "45,511.49",
-    "raw_change": 249.12109375
+    "raw_change": 331.4609375
   },
   "tsmc": {
     "price": "2,380.00",
@@ -25,12 +25,12 @@
     "raw_change": -0.1999969482421875
   },
   "fitx": {
-    "price": "45,760.61",
-    "change": "+249.12",
-    "pChange": "+0.55%",
-    "week_pChange": "+0.55%",
+    "price": "45,842.95",
+    "change": "+331.46",
+    "pChange": "+0.73%",
+    "week_pChange": "+0.73%",
     "prev_close": "45,511.49",
-    "raw_change": 249.12109375
+    "raw_change": 331.4609375
   },
   "dji": {
     "price": "52,093.11",
@@ -69,20 +69,20 @@
     "prev": "17.10"
   },
   "usdtwd": {
-    "price": "31.76",
-    "change": "+0.04",
-    "pChange": "+0.13%",
-    "week_pChange": "+0.13%",
+    "price": "31.73",
+    "change": "+0.01",
+    "pChange": "+0.04%",
+    "week_pChange": "+0.04%",
     "prev_close": "31.72",
-    "raw_change": 0.042400360107421875
+    "raw_change": 0.012399673461914062
   },
   "brent": {
-    "price": "108.01",
-    "change": "-0.74",
-    "pChange": "-0.68%",
-    "week_pChange": "-0.68%",
+    "price": "108.17",
+    "change": "-0.58",
+    "pChange": "-0.53%",
+    "week_pChange": "-0.53%",
     "prev_close": "108.75",
-    "raw_change": -0.7399978637695312
+    "raw_change": -0.5800018310546875
   },
   "bond": {
     "price": "5.00",
@@ -138,7 +138,7 @@
       },
       {
         "time": "09/16",
-        "price": 45760.61
+        "price": 45842.95
       }
     ],
     "tsmc": [
@@ -204,7 +204,7 @@
       },
       {
         "time": "09/16",
-        "price": 45760.61
+        "price": 45842.95
       }
     ],
     "dji": [
@@ -314,7 +314,7 @@
       },
       {
         "time": "09/16",
-        "price": 31.76
+        "price": 31.73
       }
     ],
     "brent": [
@@ -336,7 +336,7 @@
       },
       {
         "time": "09/16",
-        "price": 108.01
+        "price": 108.17
       }
     ],
     "bond": [
@@ -380,7 +380,7 @@
       },
       {
         "time": "09/16",
-        "price": 31.76
+        "price": 31.73
       }
     ]
   }
