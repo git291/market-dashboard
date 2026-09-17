@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 import yfinance as yf
 
 def safe_float(val, default=0.0):
-    """防止 NaN 或 None 寫入 JSON 破壞格式"""
+    """防止 NaN 或 Inf 破壞 JSON 語法"""
     try:
         f = float(val)
         return default if math.isnan(f) or math.isinf(f) else f
@@ -18,7 +18,7 @@ def fetch_real_data():
         'twii': '^TWII',        # 台股加權指數
         'tsmc': '2330.TW',      # 台積電
         'etf6208': '006208.TW',  # 富邦台50
-        'fitx': '^TWII',        # 台指期
+        'fitx': 'WTX=F',        # 台指期近全 (修復：使用正確期貨代號，不再與大盤相同)
         'dji': '^DJI',          # 道瓊
         'ixic': '^IXIC',        # 那斯達克
         'sox': '^SOX',          # 費半
@@ -34,9 +34,8 @@ def fetch_real_data():
     for key, sym in symbols.items():
         try:
             ticker = yf.Ticker(sym)
-            hist = ticker.history(period="10d") # 抓 10 天確保剔除 NaN 後仍有足夠 K 線
-
-            # 過濾掉包含 NaN 的無效資料行
+            # 抓取 15 天歷史資料，確保剔除休假日與 NaN 後有足夠 K 線
+            hist = ticker.history(period="15d")
             hist = hist.dropna(subset=['Close'])
 
             if not hist.empty and len(hist) >= 2:
@@ -64,7 +63,7 @@ def fetch_real_data():
                     "raw_change": change
                 }
 
-                # 圖表數據過濾 NaN
+                # 取最新 5 個交易日繪製圖表
                 chart_points = []
                 for idx, row in hist.tail(5).iterrows():
                     p_val = safe_float(row['Close'])
@@ -80,10 +79,11 @@ def fetch_real_data():
             print(f"Fetch error on {key} ({sym}): {e}")
             market_data[key] = {"price": "--", "change": "--", "pChange": "--", "raw_change": 0}
 
+    # 前端 HTML 的台幣 canvas 對應 key 為 twd
     if 'usdtwd' in charts_data:
         charts_data['twd'] = charts_data['usdtwd']
 
-    # 補充 VIX 細節
+    # 補充 VIX 開高低收細節
     try:
         v_ticker = yf.Ticker('^VIX').history(period="5d").dropna()
         if not v_ticker.empty:
@@ -103,7 +103,7 @@ def fetch_real_data():
 def fetch_twse_margin():
     """爬取證交所真實資券資料"""
     url = f"https://www.twse.com.tw/rwd/zh/margin/MI_MARGN?response=json&_={int(datetime.now().timestamp())}"
-    headers = {'User-Agent': 'Mozilla/5.0'}
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
     
     try:
         res = requests.get(url, headers=headers, timeout=10)
@@ -146,6 +146,7 @@ def fetch_twse_margin():
     except Exception as e:
         print(f"Margin error: {e}")
 
+    # 備用保底數據
     now = datetime.now()
     return [
         {"date": now.strftime("%m/%d"), "margin_buy_sell": "-12.5億", "short_buy_sell": "+1,200", "margin_balance": "2,650億", "short_balance": "32.5萬"},
