@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-17 00:43:34",
+  "updated_at": "2026-09-17 00:49:30",
   "twii": {
     "price": "45,511.49",
     "change": "-351.03",
@@ -17,12 +17,12 @@
     "raw_change": 2.0
   },
   "etf6208": {
-    "price": "nan",
-    "change": "+nan",
-    "pChange": "+nan%",
-    "week_pChange": "+nan%",
-    "prev_close": "243.50",
-    "raw_change": NaN
+    "price": "243.50",
+    "change": "-1.15",
+    "pChange": "-0.47%",
+    "week_pChange": "-0.47%",
+    "prev_close": "244.65",
+    "raw_change": -1.149993896484375
   },
   "fitx": {
     "price": "45,511.49",
@@ -69,20 +69,20 @@
     "prev": "17.20"
   },
   "usdtwd": {
-    "price": "31.86",
+    "price": "31.85",
     "change": "+0.08",
-    "pChange": "+0.27%",
-    "week_pChange": "+0.27%",
+    "pChange": "+0.26%",
+    "week_pChange": "+0.26%",
     "prev_close": "31.77",
-    "raw_change": 0.08460044860839844
+    "raw_change": 0.08160018920898438
   },
   "brent": {
-    "price": "104.85",
-    "change": "-3.90",
-    "pChange": "-3.59%",
-    "week_pChange": "-3.59%",
+    "price": "104.84",
+    "change": "-3.91",
+    "pChange": "-3.60%",
+    "week_pChange": "-3.60%",
     "prev_close": "108.75",
-    "raw_change": -3.9000015258789062
+    "raw_change": -3.910003662109375
   },
   "bond": {
     "price": "5.01",
@@ -165,6 +165,10 @@
     ],
     "etf6208": [
       {
+        "time": "09/09",
+        "price": 250.3
+      },
+      {
         "time": "09/10",
         "price": 249.55
       },
@@ -179,10 +183,6 @@
       {
         "time": "09/15",
         "price": 243.5
-      },
-      {
-        "time": "09/16",
-        "price": NaN
       }
     ],
     "fitx": [
@@ -314,7 +314,7 @@
       },
       {
         "time": "09/17",
-        "price": 31.86
+        "price": 31.85
       }
     ],
     "brent": [
@@ -336,7 +336,7 @@
       },
       {
         "time": "09/16",
-        "price": 104.85
+        "price": 104.84
       }
     ],
     "bond": [
@@ -380,7 +380,7 @@
       },
       {
         "time": "09/17",
-        "price": 31.86
+        "price": 31.85
       }
     ]
   }
