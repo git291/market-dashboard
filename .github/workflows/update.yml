@@ -1,40 +1,37 @@
-name: Daily Market Scraper
+name: Auto Update Market Data
 
 on:
   schedule:
-    - cron: '0 22 * * *'  # 每日 06:00 AM (Taiwan)
-  workflow_dispatch:      # 允許手動點擊按鈕執行
-  push:
-    branches:
-      - main
-      - master            # 當推送程式碼至分支時同步觸發
-
-permissions:
-  contents: write
+    - cron: '*/15 1-6 * * 1-5'
+  workflow_dispatch:
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
     steps:
-      - name: Checkout Repository
+      - name: 1. 檢出程式碼
         uses: actions/checkout@v4
 
-      - name: Set up Python
+      - name: 2. 設定 Python 環境
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
-      - name: Install dependencies
+      - name: 3. 強制安裝必要套件
         run: |
+          python -m pip install --upgrade pip
           pip install yfinance requests
 
-      - name: Fetch Market Data
+      - name: 4. 執行爬蟲腳本
         run: python update_data.py
 
-      - name: Commit & Push
+      - name: 5. 提交更新資料
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add data.json
-          git commit -m "Auto Update Market Data" || echo "No changes to commit"
-          git push
+          git status
+          git diff-index --quiet HEAD || (git commit -m "Auto: Update market data [skip ci]" && git push)
