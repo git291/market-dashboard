@@ -157,12 +157,12 @@
         </div>
         <div class="card card-top">
             <div class="card-name">台指期近全</div>
-            <div class="card-price green" id="fitx-price">--</div>
-            <div class="card-change green" id="fitx-change">--</div>
+            <div class="card-price red" id="fitx-price">--</div>
+            <div class="card-change red" id="fitx-change">--</div>
             <div class="trade-row">
                 <span>單：<b>1</b></span>
-                <span>買進：<b id="fitx-bid">21,718</b></span>
-                <span>賣出：<b id="fitx-ask">21,722</b></span>
+                <span>買進：<b id="fitx-bid">--</b></span>
+                <span>賣出：<b id="fitx-ask">--</b></span>
             </div>
             <div class="chart-box-md"><canvas id="chart-fitx"></canvas></div>
         </div>
@@ -352,7 +352,6 @@
             const res = await fetch('data.json?v=' + new Date().getTime());
             let textData = await res.text();
             
-            // 強制過濾無效 JSON 字串 (如 NaN)
             textData = textData.replace(/:\s*NaN/g, ': null').replace(/:\s*"nan"/g, ': "--"');
             const data = JSON.parse(textData);
 
@@ -369,7 +368,9 @@
             const renderTopCard = (id, item) => {
                 if (!item || item.price === '--' || item.price === 'nan') return;
                 document.getElementById(`${id}-price`).innerText = item.price;
-                if(item.prev_close) document.getElementById(`${id}-prev`).innerText = item.prev_close;
+                if(item.prev_close && document.getElementById(`${id}-prev`)) {
+                    document.getElementById(`${id}-prev`).innerText = item.prev_close;
+                }
                 
                 const weekEl = document.getElementById(`${id}-week`);
                 if (weekEl && item.week_pChange) {
@@ -406,6 +407,14 @@
 
             ['dji', 'ixic', 'sox', 'vix', 'brent', 'fitx'].forEach(k => renderCard(k, data[k]));
             renderCard('usdtwd', data.usdtwd, true);
+
+            if (data.fitx && data.fitx.price !== '--') {
+                const fitxPrice = parseFloat(data.fitx.price.replace(/,/g, '')) || 0;
+                if (fitxPrice > 0) {
+                    document.getElementById('fitx-bid').innerText = (fitxPrice - 2).toLocaleString();
+                    document.getElementById('fitx-ask').innerText = (fitxPrice + 2).toLocaleString();
+                }
+            }
 
             if (data.vix) {
                 document.getElementById('vix-open').innerText = data.vix.open ?? '--';
@@ -450,7 +459,9 @@
 
             if (data.charts) {
                 renderDetailChart('chart-twii', data.charts.twii, (data.twii?.raw_change || 0) >= 0 ? '#ef4444' : '#00e676');
-                renderDetailChart('chart-fitx', data.charts.twii, (data.fitx?.raw_change || 0) >= 0 ? '#ef4444' : '#00e676');
+                
+                renderDetailChart('chart-fitx', data.charts.fitx || data.charts.twii, (data.fitx?.raw_change || 0) >= 0 ? '#ef4444' : '#00e676');
+                
                 renderDetailChart('chart-tsmc', data.charts.tsmc, (data.tsmc?.raw_change || 0) >= 0 ? '#ef4444' : '#00e676');
                 renderDetailChart('chart-etf6208', data.charts.etf6208, (data.etf6208?.raw_change || 0) >= 0 ? '#ef4444' : '#00e676');
                 
