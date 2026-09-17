@@ -12,13 +12,45 @@ def safe_float(val, default=0.0):
     except:
         return default
 
+def fetch_taifex_fitx():
+    """直接從台灣期貨交易所 (TAIFEX) 官方 OpenAPI 抓取最新台指期數據"""
+    url = "https://openapi.taifex.com.tw/v1/DailyMarketReport"
+    try:
+        res = requests.get(url, timeout=5)
+        if res.status_code == 200:
+            data = res.json()
+            # 尋找台指期 (TX) 近月合約
+            tx_data = [item for item in data if item.get('MarketCode') == '0' and item.get('CommodityID') == 'TX']
+            if tx_data:
+                item = tx_data[0]
+                close_price = safe_float(item.get('Close', 0))
+                open_price = safe_float(item.get('Open', 0))
+                
+                if close_price > 0:
+                    # 計算漲跌點數與百分比
+                    last_close = safe_float(item.get('LastClose', open_price))
+                    change = close_price - last_close if last_close > 0 else 0.0
+                    p_change = (change / last_close * 100) if last_close > 0 else 0.0
+                    
+                    return {
+                        "price": f"{close_price:,.2f}",
+                        "change": f"{change:+.2f}",
+                        "pChange": f"{p_change:+.2f}%",
+                        "week_pChange": f"{p_change:+.2f}%",
+                        "prev_close": f"{last_close:,.2f}",
+                        "raw_change": change
+                    }
+    except Exception as e:
+        print(f"TAIFEX API Error: {e}")
+    return None
+
 def fetch_real_data():
     """使用 yfinance 動態抓取全球最新市場真實數據"""
     symbols = {
         'twii': '^TWII',        # 台股加權指數
         'tsmc': '2330.TW',      # 台積電
         'etf6208': '006208.TW',  # 富邦台50
-        'fitx': 'TX=F',         # 台指期近月 (使用最穩定之期貨代號，擺脫 -- 與大盤重複問題)
+        'fitx': 'TX=F',         # 台指期
         'dji': '^DJI',          # 道瓊
         'ixic': '^IXIC',        # 那斯達克
         'sox': '^SOX',          # 費半
@@ -34,9 +66,7 @@ def fetch_real_data():
     for key, sym in symbols.items():
         try:
             ticker = yf.Ticker(sym)
-            # 抓取 15 天歷史資料，確保剔除休假日與 NaN 後有足夠的 K 線數據
-            hist = ticker.history(period="15d")
-            hist = hist.dropna(subset=['Close'])
+            hist = ticker.history(period="15d").dropna(subset=['Close'])
 
             if not hist.empty and len(hist) >= 2:
                 latest = hist.iloc[-1]
@@ -45,11 +75,8 @@ def fetch_real_data():
                 price = safe_float(latest['Close'])
                 prev_close = safe_float(prev['Close'])
 
-                if prev_close > 0:
-                    change = price - prev_close
-                    p_change = (change / prev_close) * 100
-                else:
-                    change, p_change = 0.0, 0.0
+                change = price - prev_close if prev_close > 0 else 0.0
+                p_change = (change / prev_close) * 100 if prev_close > 0 else 0.0
 
                 price_str = f"{price:,.2f}" if price >= 100 else f"{price:.2f}"
                 prev_str = f"{prev_close:,.2f}" if prev_close >= 100 else f"{prev_close:.2f}"
@@ -63,7 +90,6 @@ def fetch_real_data():
                     "raw_change": change
                 }
 
-                # 取最新 5 個交易日繪製圖表
                 chart_points = []
                 for idx, row in hist.tail(5).iterrows():
                     p_val = safe_float(row['Close'])
@@ -79,11 +105,19 @@ def fetch_real_data():
             print(f"Fetch error on {key} ({sym}): {e}")
             market_data[key] = {"price": "--", "change": "--", "pChange": "--", "raw_change": 0}
 
-    # 前端 HTML 的台幣圖表 Canvas 對應鍵名為 twd
+    # 【重點修正】優先以期交所官方數據覆蓋台指期價格
+    taifex_fitx = fetch_taifex_fitx()
+    if taifex_fitx:
+        market_data['fitx'] = taifex_fitx
+
+    # 若抓不到獨立期貨走勢圖，則拿加權指數圖表備用
+    if 'fitx' not in charts_data or not charts_data['fitx']:
+        charts_data['fitx'] = charts_data.get('twii', [])
+
     if 'usdtwd' in charts_data:
         charts_data['twd'] = charts_data['usdtwd']
 
-    # 補充 VIX 開高低收等詳細行情數據
+    # 補充 VIX 詳細數據
     try:
         v_ticker = yf.Ticker('^VIX').history(period="5d").dropna()
         if not v_ticker.empty:
@@ -101,7 +135,7 @@ def fetch_real_data():
     return market_data, charts_data
 
 def fetch_twse_margin():
-    """爬取台灣證券交易所真實融資融券數據"""
+    """爬取證交所真實資券數據"""
     url = f"https://www.twse.com.tw/rwd/zh/margin/MI_MARGN?response=json&_={int(datetime.now().timestamp())}"
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
     
@@ -146,7 +180,6 @@ def fetch_twse_margin():
     except Exception as e:
         print(f"Margin error: {e}")
 
-    # 保底靜態備份數據
     now = datetime.now()
     return [
         {"date": now.strftime("%m/%d"), "margin_buy_sell": "-12.5億", "short_buy_sell": "+1,200", "margin_balance": "2,650億", "short_balance": "32.5萬"},
