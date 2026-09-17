@@ -158,7 +158,6 @@
         <div class="card card-top">
             <div class="card-name">台指期近全</div>
             <div class="card-price red" id="fitx-price">--</div>
-            <div class="card-change red" id="fitx-change">--</div>
             <div class="trade-row">
                 <span>單：<b>1</b></span>
                 <span>買進：<b id="fitx-bid">--</b></span>
@@ -367,8 +366,14 @@
 
             const renderTopCard = (id, item) => {
                 if (!item || item.price === '--' || item.price === 'nan') return;
-                document.getElementById(`${id}-price`).innerText = item.price;
-                if(item.prev_close && document.getElementById(`${id}-prev`)) {
+                const priceEl = document.getElementById(`${id}-price`);
+                if (priceEl) {
+                    priceEl.innerText = item.price;
+                    const isUp = (item.raw_change || 0) >= 0;
+                    priceEl.className = `card-price ${isUp ? 'red' : 'green'}`;
+                }
+
+                if (item.prev_close && document.getElementById(`${id}-prev`)) {
                     document.getElementById(`${id}-prev`).innerText = item.prev_close;
                 }
                 
@@ -383,6 +388,22 @@
             renderTopCard('twii', data.twii);
             renderTopCard('tsmc', data.tsmc);
             renderTopCard('etf6208', data.etf6208);
+
+            // 專屬處理：台指期渲染 (包含主價格與檔位買賣價)
+            if (data.fitx && data.fitx.price && data.fitx.price !== '--' && data.fitx.price !== 'nan') {
+                const fitxPriceEl = document.getElementById('fitx-price');
+                if (fitxPriceEl) {
+                    fitxPriceEl.innerText = data.fitx.price;
+                    const isUp = (data.fitx.raw_change || 0) >= 0;
+                    fitxPriceEl.className = `card-price ${isUp ? 'red' : 'green'}`;
+                }
+
+                const fitxVal = parseFloat(String(data.fitx.price).replace(/,/g, '')) || 0;
+                if (fitxVal > 0) {
+                    document.getElementById('fitx-bid').innerText = (fitxVal - 2).toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 2});
+                    document.getElementById('fitx-ask').innerText = (fitxVal + 2).toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 2});
+                }
+            }
 
             const renderCard = (id, item, forceRed = false) => {
                 if (!item || item.price === '--' || item.price === 'nan') return;
@@ -405,16 +426,8 @@
                 }
             };
 
-            ['dji', 'ixic', 'sox', 'vix', 'brent', 'fitx'].forEach(k => renderCard(k, data[k]));
+            ['dji', 'ixic', 'sox', 'vix', 'brent'].forEach(k => renderCard(k, data[k]));
             renderCard('usdtwd', data.usdtwd, true);
-
-            if (data.fitx && data.fitx.price !== '--') {
-                const fitxPrice = parseFloat(data.fitx.price.replace(/,/g, '')) || 0;
-                if (fitxPrice > 0) {
-                    document.getElementById('fitx-bid').innerText = (fitxPrice - 2).toLocaleString();
-                    document.getElementById('fitx-ask').innerText = (fitxPrice + 2).toLocaleString();
-                }
-            }
 
             if (data.vix) {
                 document.getElementById('vix-open').innerText = data.vix.open ?? '--';
@@ -459,9 +472,7 @@
 
             if (data.charts) {
                 renderDetailChart('chart-twii', data.charts.twii, (data.twii?.raw_change || 0) >= 0 ? '#ef4444' : '#00e676');
-                
                 renderDetailChart('chart-fitx', data.charts.fitx || data.charts.twii, (data.fitx?.raw_change || 0) >= 0 ? '#ef4444' : '#00e676');
-                
                 renderDetailChart('chart-tsmc', data.charts.tsmc, (data.tsmc?.raw_change || 0) >= 0 ? '#ef4444' : '#00e676');
                 renderDetailChart('chart-etf6208', data.charts.etf6208, (data.etf6208?.raw_change || 0) >= 0 ? '#ef4444' : '#00e676');
                 
