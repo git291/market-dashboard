@@ -1,12 +1,12 @@
 {
-  "updated_at": "2026-09-17 03:17:28",
+  "updated_at": "2026-09-17 05:34:10",
   "twii": {
-    "price": "46,406.89",
-    "change": "+557.99",
-    "pChange": "+1.22%",
-    "week_pChange": "+1.22%",
+    "price": "46,332.41",
+    "change": "+483.51",
+    "pChange": "+1.05%",
+    "week_pChange": "+1.05%",
     "prev_close": "45,848.90",
-    "raw_change": 557.9921875
+    "raw_change": 483.51171875
   },
   "tsmc": {
     "price": "2,425.00",
@@ -17,12 +17,12 @@
     "raw_change": 45.0
   },
   "etf6208": {
-    "price": "248.30",
-    "change": "+4.80",
-    "pChange": "+1.97%",
-    "week_pChange": "+1.97%",
+    "price": "247.80",
+    "change": "+4.30",
+    "pChange": "+1.77%",
+    "week_pChange": "+1.77%",
     "prev_close": "243.50",
-    "raw_change": 4.8000030517578125
+    "raw_change": 4.3000030517578125
   },
   "fitx": {
     "price": "--",
@@ -39,12 +39,12 @@
     "raw_change": -631.2109375
   },
   "ixic": {
-    "price": "25,978.42",
-    "change": "-3.15",
+    "price": "25,978.43",
+    "change": "-3.14",
     "pChange": "-0.01%",
     "week_pChange": "-0.01%",
     "prev_close": "25,981.57",
-    "raw_change": -3.146484375
+    "raw_change": -3.140625
   },
   "sox": {
     "price": "11,246.11",
@@ -52,7 +52,7 @@
     "pChange": "+0.63%",
     "week_pChange": "+0.63%",
     "prev_close": "11,175.55",
-    "raw_change": 70.5576171875
+    "raw_change": 70.560546875
   },
   "vix": {
     "price": "17.71",
@@ -67,20 +67,20 @@
     "prev": "17.20"
   },
   "usdtwd": {
-    "price": "31.88",
-    "change": "+0.11",
-    "pChange": "+0.34%",
-    "week_pChange": "+0.34%",
+    "price": "31.87",
+    "change": "+0.10",
+    "pChange": "+0.30%",
+    "week_pChange": "+0.30%",
     "prev_close": "31.77",
-    "raw_change": 0.10860061645507812
+    "raw_change": 0.09560012817382812
   },
   "brent": {
-    "price": "105.90",
-    "change": "-2.85",
-    "pChange": "-2.62%",
-    "week_pChange": "-2.62%",
-    "prev_close": "108.75",
-    "raw_change": -2.8499984741210938
+    "price": "105.77",
+    "change": "-0.06",
+    "pChange": "-0.06%",
+    "week_pChange": "-0.06%",
+    "prev_close": "105.83",
+    "raw_change": -0.06000518798828125
   },
   "bond": {
     "price": "5.01",
@@ -136,7 +136,7 @@
       },
       {
         "time": "09/17",
-        "price": 46406.89
+        "price": 46332.41
       }
     ],
     "tsmc": [
@@ -180,7 +180,7 @@
       },
       {
         "time": "09/17",
-        "price": 248.3
+        "price": 247.8
       }
     ],
     "dji": [
@@ -224,7 +224,7 @@
       },
       {
         "time": "09/16",
-        "price": 25978.42
+        "price": 25978.43
       }
     ],
     "sox": [
@@ -290,14 +290,10 @@
       },
       {
         "time": "09/17",
-        "price": 31.88
+        "price": 31.87
       }
     ],
     "brent": [
-      {
-        "time": "09/10",
-        "price": 107.63
-      },
       {
         "time": "09/11",
         "price": 104.61
@@ -312,7 +308,11 @@
       },
       {
         "time": "09/16",
-        "price": 105.9
+        "price": 105.83
+      },
+      {
+        "time": "09/17",
+        "price": 105.77
       }
     ],
     "bond": [
@@ -356,7 +356,7 @@
       },
       {
         "time": "09/17",
-        "price": 46406.89
+        "price": 46332.41
       }
     ],
     "twd": [
@@ -378,7 +378,7 @@
       },
       {
         "time": "09/17",
-        "price": 31.88
+        "price": 31.87
       }
     ]
   }
