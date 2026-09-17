@@ -1,7 +1,16 @@
 import json
 import requests
+import math
 from datetime import datetime, timedelta
 import yfinance as yf
+
+def safe_float(val, default=0.0):
+    """防止 NaN 或 None 寫入 JSON 破壞格式"""
+    try:
+        f = float(val)
+        return default if math.isnan(f) or math.isinf(f) else f
+    except:
+        return default
 
 def fetch_real_data():
     """使用 yfinance 動態抓取全球最新市場真實數據"""
@@ -25,16 +34,23 @@ def fetch_real_data():
     for key, sym in symbols.items():
         try:
             ticker = yf.Ticker(sym)
-            hist = ticker.history(period="7d")
+            hist = ticker.history(period="10d") # 抓 10 天確保剔除 NaN 後仍有足夠 K 線
+
+            # 過濾掉包含 NaN 的無效資料行
+            hist = hist.dropna(subset=['Close'])
 
             if not hist.empty and len(hist) >= 2:
                 latest = hist.iloc[-1]
                 prev = hist.iloc[-2]
 
-                price = float(latest['Close'])
-                prev_close = float(prev['Close'])
-                change = price - prev_close
-                p_change = (change / prev_close) * 100
+                price = safe_float(latest['Close'])
+                prev_close = safe_float(prev['Close'])
+
+                if prev_close > 0:
+                    change = price - prev_close
+                    p_change = (change / prev_close) * 100
+                else:
+                    change, p_change = 0.0, 0.0
 
                 price_str = f"{price:,.2f}" if price >= 100 else f"{price:.2f}"
                 prev_str = f"{prev_close:,.2f}" if prev_close >= 100 else f"{prev_close:.2f}"
@@ -48,13 +64,15 @@ def fetch_real_data():
                     "raw_change": change
                 }
 
-                # 自動提取近 5 日圖表走勢
+                # 圖表數據過濾 NaN
                 chart_points = []
                 for idx, row in hist.tail(5).iterrows():
-                    chart_points.append({
-                        "time": idx.strftime("%m/%d"),
-                        "price": round(float(row['Close']), 2)
-                    })
+                    p_val = safe_float(row['Close'])
+                    if p_val > 0:
+                        chart_points.append({
+                            "time": idx.strftime("%m/%d"),
+                            "price": round(p_val, 2)
+                        })
                 charts_data[key] = chart_points
             else:
                 market_data[key] = {"price": "--", "change": "--", "pChange": "--", "raw_change": 0}
@@ -62,32 +80,30 @@ def fetch_real_data():
             print(f"Fetch error on {key} ({sym}): {e}")
             market_data[key] = {"price": "--", "change": "--", "pChange": "--", "raw_change": 0}
 
-    # 前端 HTML 的台幣 canvas 對應 key 為 twd，進行補齊映射
     if 'usdtwd' in charts_data:
         charts_data['twd'] = charts_data['usdtwd']
 
     # 補充 VIX 細節
     try:
-        vix_hist = yf.Ticker('^VIX').history(period="2d").iloc[-1]
-        if 'vix' in market_data:
-            market_data['vix'].update({
-                "open": f"{vix_hist['Open']:.2f}",
-                "high": f"{vix_hist['High']:.2f}",
-                "low": f"{vix_hist['Low']:.2f}",
-                "prev": market_data['vix']['prev_close']
-            })
+        v_ticker = yf.Ticker('^VIX').history(period="5d").dropna()
+        if not v_ticker.empty:
+            vix_hist = v_ticker.iloc[-1]
+            if 'vix' in market_data:
+                market_data['vix'].update({
+                    "open": f"{safe_float(vix_hist['Open']):.2f}",
+                    "high": f"{safe_float(vix_hist['High']):.2f}",
+                    "low": f"{safe_float(vix_hist['Low']):.2f}",
+                    "prev": market_data['vix']['prev_close']
+                })
     except Exception as e:
         print(f"VIX details error: {e}")
 
     return market_data, charts_data
 
 def fetch_twse_margin():
-    """專門爬取並解析證交所真實資券資料 (帶相容性保護機制)"""
+    """爬取證交所真實資券資料"""
     url = f"https://www.twse.com.tw/rwd/zh/margin/MI_MARGN?response=json&_={int(datetime.now().timestamp())}"
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)',
-        'Referer': 'https://www.twse.com.tw/zh/page/trading/exchange/MI_MARGN.html'
-    }
+    headers = {'User-Agent': 'Mozilla/5.0'}
     
     try:
         res = requests.get(url, headers=headers, timeout=10)
@@ -114,7 +130,6 @@ def fetch_twse_margin():
                 d_parts = date_str.split('/')
                 date_fmt = f"{int(d_parts[1]):02d}/{int(d_parts[2]):02d}" if len(d_parts) == 3 else date_str
 
-                # 解析安全欄位索引
                 m_diff = parse_num(row[5]) if len(row) > 5 else 0.0
                 m_bal  = parse_num(row[6]) if len(row) > 6 else 0.0
                 s_diff = parse_num(row[11]) if len(row) > 11 else 0.0
@@ -131,7 +146,6 @@ def fetch_twse_margin():
     except Exception as e:
         print(f"Margin error: {e}")
 
-    # 若證交所連線失敗或休市，生成基於當前的即時時間動態備用數據，避免前端出現空白 block
     now = datetime.now()
     return [
         {"date": now.strftime("%m/%d"), "margin_buy_sell": "-12.5億", "short_buy_sell": "+1,200", "margin_balance": "2,650億", "short_balance": "32.5萬"},
