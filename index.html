@@ -1,330 +1,26 @@
-<!DOCTYPE html>
-<html lang="zh-TW">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>全球市場行情一覽</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        :root {
-            --bg-color: #030712;
-            --panel-bg: #070d1e;
-            --card-bg: #091329;
-            --border-glow: #00bcd4;
-            --text-main: #ffffff;
-            --text-sub: #94a3b8;
-            --up-red: #ff334b;
-            --down-green: #00e676;
-        }
-
-        * { 
-            box-sizing: border-box; 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            margin: 0;
-            padding: 15px;
-            display: flex;
-            justify-content: center;
-        }
-
-        .dashboard {
-            width: 100%;
-            max-width: 860px;
-            background: var(--panel-bg);
-            border: 2px solid var(--border-glow);
-            border-radius: 12px;
-            padding: 16px;
-            box-shadow: 0 0 15px rgba(0, 188, 212, 0.3);
-            overflow: hidden;
-        }
-
-        .header { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            border-bottom: 1px solid #1e293b; 
-            padding-bottom: 10px; 
-            margin-bottom: 12px; 
-        }
-        .header-title { font-size: 1.6rem; font-weight: 900; color: #fff; text-shadow: 0 0 8px rgba(255,255,255,0.5); }
-        .date-badge { background: #0f2242; border: 1px solid var(--border-glow); border-radius: 6px; padding: 3px 8px; font-size: 0.85rem; font-weight: bold; }
-        .sub-title { font-size: 0.75rem; color: var(--text-sub); }
-
-        .grid-3 { 
-            display: grid; 
-            grid-template-columns: repeat(3, minmax(0, 1fr)); 
-            gap: 10px; 
-            margin-bottom: 10px; 
-        }
-        .grid-2 { 
-            display: grid; 
-            grid-template-columns: repeat(2, minmax(0, 1fr)); 
-            gap: 10px; 
-            margin-bottom: 10px; 
-        }
-
-        .card { 
-            background: var(--card-bg); 
-            border: 1px solid #1a2a47; 
-            border-radius: 8px; 
-            padding: 8px; 
-            text-align: center; 
-            position: relative;
-            min-width: 0;
-        }
-        .card-top { border-top: 3px solid var(--border-glow); background: #0b1836; padding: 8px 6px 6px 6px; }
-        .card-white { background: #ffffff !important; color: #0f172a !important; border: 1px solid #cbd5e1; }
-        .card-white .card-name { color: #0f172a !important; }
-        .card-white .bond-value { color: #0f172a !important; }
-
-        .card-name { font-size: 0.85rem; color: #cbd5e1; font-weight: bold; margin-bottom: 2px; }
-        
-        .card-price { 
-            font-size: 1.25rem; 
-            font-weight: 900; 
-            font-family: monospace; 
-            line-height: 1.1; 
-            margin: 2px 0;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .card-change { font-size: 0.75rem; font-weight: bold; margin-top: 2px; }
-        .purple-line { border-bottom: 2px solid #a855f7; padding-bottom: 4px; }
-
-        .green { color: var(--down-green) !important; }
-        .red { color: var(--up-red) !important; }
-
-        .trade-row { 
-            display: flex; 
-            justify-content: space-between; 
-            font-size: 0.65rem; 
-            color: var(--text-sub); 
-            background: #050b18; 
-            padding: 3px 4px; 
-            border-radius: 4px; 
-            margin-top: 4px; 
-        }
-        .trade-row b { color: #fff; }
-
-        .details-table { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; font-size: 0.68rem; color: var(--text-sub); border-top: 1px dashed #1e293b; margin-top: 4px; padding-top: 4px; text-align: left; }
-        .details-table span { color: #fff; font-weight: bold; }
-
-        .gauge-container { position: relative; width: 100%; max-width: 140px; margin: 0 auto; }
-        .gauge-score { font-size: 1.8rem; font-weight: 900; color: #fff; margin-top: -16px; }
-
-        .bond-value { font-size: 1.8rem; font-weight: 900; color: #fff; margin: 6px 0 2px 0; }
-
-        .etf-table-container { height: 110px; overflow-y: auto; margin-top: 4px; }
-        .etf-table { width: 100%; font-size: 0.65rem; border-collapse: collapse; text-align: right; }
-        .etf-table th { background: #0f172a; color: #94a3b8; padding: 4px 2px; position: sticky; top: 0; font-weight: normal; }
-        .etf-table td { padding: 4px 2px; border-bottom: 1px solid #111827; }
-        .etf-table td:first-child { text-align: center; color: #94a3b8; }
-
-        .chart-box-md { height: 85px; width: 100%; position: relative; margin-top: 4px; }
-
-        .footer { border-top: 1px solid #1e293b; margin-top: 12px; padding-top: 8px; font-size: 0.75rem; color: var(--text-sub); display: flex; justify-content: space-between; }
-    </style>
-</head>
-<body>
-
-<div class="dashboard">
-    <div class="header">
-        <div>
-            <div class="header-title">全球市場行情一覽</div>
-            <div class="sub-title">一張圖掌握全球金融市場動態</div>
-        </div>
-        <div class="header-meta">
-            <div class="date-badge" id="todayBadge">📅 --/--/--</div>
-            <div class="sub-title" id="updateTime">更新時間：--</div>
-        </div>
-    </div>
-
-    <!-- 第一列 -->
-    <div class="grid-2">
-        <div class="card card-top">
-            <div class="card-name">台股大盤 (週線)</div>
-            <div class="card-price red" id="twii-price">--</div>
-            <div class="trade-row">
-                <span>昨收：<b id="twii-prev">--</b></span>
-                <span>週線：<b id="twii-week">--</b></span>
-            </div>
-            <div class="chart-box-md"><canvas id="chart-twii"></canvas></div>
-        </div>
-        <div class="card card-top">
-            <div class="card-name">台指期近全</div>
-            <div class="card-price green" id="fitx-price">--</div>
-            <div class="card-change green" id="fitx-change">--</div>
-            <div class="trade-row">
-                <span>單：<b>1</b></span>
-                <span>買進：<b id="fitx-bid">21,718</b></span>
-                <span>賣出：<b id="fitx-ask">21,722</b></span>
-            </div>
-            <div class="chart-box-md"><canvas id="chart-fitx"></canvas></div>
-        </div>
-    </div>
-
-    <!-- 第二列 -->
-    <div class="grid-3">
-        <div class="card">
-            <div class="card-name">道瓊指數</div>
-            <div class="card-price green purple-line" id="dji-price">--</div>
-            <div class="card-change green" id="dji-change">--</div>
-        </div>
-        <div class="card">
-            <div class="card-name">那斯達克</div>
-            <div class="card-price green purple-line" id="ixic-price">--</div>
-            <div class="card-change green" id="ixic-change">--</div>
-        </div>
-        <div class="card">
-            <div class="card-name">費城半導體</div>
-            <div class="card-price green purple-line" id="sox-price">--</div>
-            <div class="card-change green" id="sox-change">--</div>
-        </div>
-    </div>
-
-    <!-- 第三列 -->
-    <div class="grid-2">
-        <div class="card card-top">
-            <div class="card-name">台積電 2330 (週線)</div>
-            <div class="card-price red" id="tsmc-price">--</div>
-            <div class="trade-row">
-                <span>昨收：<b id="tsmc-prev">--</b></span>
-                <span>週線：<b id="tsmc-week">--</b></span>
-            </div>
-            <div class="chart-box-md"><canvas id="chart-tsmc"></canvas></div>
-        </div>
-        <div class="card card-top">
-            <div class="card-name">富邦台50 006208 (週線)</div>
-            <div class="card-price red" id="etf6208-price">--</div>
-            <div class="trade-row">
-                <span>昨收：<b id="etf6208-prev">--</b></span>
-                <span>週線：<b id="etf6208-week">--</b></span>
-            </div>
-            <div class="chart-box-md"><canvas id="chart-etf6208"></canvas></div>
-        </div>
-    </div>
-
-    <!-- 第四列 -->
-    <div class="grid-3">
-        <div class="card">
-            <div class="card-name">S&P500 VIX (VIX)</div>
-            <div class="card-price red" id="vix-price">--</div>
-            <div class="card-change red" id="vix-change">--</div>
-            <div class="details-table">
-                <div>開盤：<span id="vix-open">--</span></div><div>最高：<span id="vix-high">--</span></div>
-                <div>昨收：<span id="vix-prev">--</span></div><div>最低：<span id="vix-low">--</span></div>
-            </div>
-        </div>
-
-        <div class="card" style="padding: 6px;">
-            <div class="card-name" style="text-align:left; font-size:0.75rem;">上市台股扣除ETF資券進出行情</div>
-            <div class="etf-table-container">
-                <table class="etf-table">
-                    <thead>
-                        <tr>
-                            <th>日期</th>
-                            <th>融資</th>
-                            <th>融券</th>
-                            <th>資餘額</th>
-                            <th>券餘額</th>
-                        </tr>
-                    </thead>
-                    <tbody id="margin-tbody">
-                        <!-- 由 JavaScript 動態繪製 -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <div class="card card-white">
-            <div class="card-name">美國10年期公債殖利率</div>
-            <div style="font-size:0.75rem; color:#64748b;">最新數據</div>
-            <div class="bond-value" id="bond-price">-- %</div>
-            <div style="font-size:0.75rem; color:#64748b;">前值：<span id="bond-prev">-- %</span></div>
-        </div>
-    </div>
-
-    <!-- 第五列 -->
-    <div class="grid-3">
-        <div class="card">
-            <div class="card-name">恐懼與貪婪指數</div>
-            <div class="gauge-container">
-                <svg viewBox="0 0 100 60" style="width:100%;">
-                    <path d="M 10 50 A 40 40 0 0 1 26 21" fill="none" stroke="#ef4444" stroke-width="8"/>
-                    <path d="M 26 21 A 40 40 0 0 1 42 11" fill="none" stroke="#f97316" stroke-width="8"/>
-                    <path d="M 42 11 A 40 40 0 0 1 58 11" fill="none" stroke="#eab308" stroke-width="8"/>
-                    <path d="M 58 11 A 40 40 0 0 1 74 21" fill="none" stroke="#22c55e" stroke-width="8"/>
-                    <path d="M 74 21 A 40 40 0 0 1 90 50" fill="none" stroke="#15803d" stroke-width="8"/>
-                    <line id="needle" x1="50" y1="50" x2="32" y2="22" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round"/>
-                    <circle cx="50" cy="50" r="4" fill="#ffffff"/>
-                </svg>
-            </div>
-            <div class="gauge-score" id="fear-score">--</div>
-            <div style="font-size:0.75rem; color:var(--text-sub);">市場即時情緒指標 ❓</div>
-        </div>
-
-        <div class="card" style="padding: 6px;">
-            <div class="card-name" style="text-align:left; font-size:0.8rem; display:flex; justify-content:space-between; align-items:center;">
-                <span>台幣趨勢週線</span>
-                <div>
-                    <span id="usdtwd-price" class="red" style="font-weight:900; font-size:1rem;">--</span>
-                    <span id="usdtwd-change" class="red" style="font-size:0.7rem; margin-left:4px;">--</span>
-                </div>
-            </div>
-            <div class="trade-row" style="margin-bottom: 2px;">
-                <span>單：<b>1</b></span>
-                <span>買進：<b id="usdtwd-bid">31.815</b></span>
-                <span>賣出：<b id="usdtwd-ask">31.825</b></span>
-            </div>
-            <div class="chart-box-md">
-                <canvas id="twdCanvas"></canvas>
-            </div>
-        </div>
-
-        <div class="card" style="padding: 6px;">
-            <div class="card-name" style="text-align:left; font-size:0.8rem; display:flex; justify-content:space-between; align-items:center;">
-                <span>布蘭特原油 (日線)</span>
-                <div>
-                    <span id="brent-price" class="red" style="font-weight:900; font-size:1rem;">--</span>
-                    <span id="brent-change" class="red" style="font-size:0.7rem; margin-left:4px;">--</span>
-                </div>
-            </div>
-            <div class="chart-box-md">
-                <canvas id="brentCanvas"></canvas>
-            </div>
-        </div>
-    </div>
-
-    <div class="footer">
-        <div>長期投資 · 穩健理財 · 一起創造更美好未來</div>
-        <div>🌐 全球市場儀表板</div>
-    </div>
-</div>
-
 <script>
     let chartInstances = {};
 
     function renderDetailChart(canvasId, chartData, color='#ef4444') {
-        if (!chartData || chartData.length === 0) return;
+        if (!chartData || !Array.isArray(chartData) || chartData.length === 0) return;
         const canvas = document.getElementById(canvasId);
-        if(!canvas) return;
+        if (!canvas) return;
         const ctx = canvas.getContext('2d');
         
         if (chartInstances[canvasId]) chartInstances[canvasId].destroy();
+
+        // 過濾掉數據中的 NaN
+        const cleanData = chartData.filter(d => d && !isNaN(d.price) && d.price !== null);
+        if (cleanData.length === 0) return;
 
         const bgAlpha = color === '#ef4444' ? 'rgba(239, 68, 68, 0.12)' : (color === '#00e676' ? 'rgba(0, 230, 118, 0.12)' : 'rgba(234, 179, 8, 0.12)');
 
         chartInstances[canvasId] = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: chartData.map(d => d.time),
+                labels: cleanData.map(d => d.time),
                 datasets: [{
-                    data: chartData.map(d => d.price),
+                    data: cleanData.map(d => d.price),
                     borderColor: color,
                     borderWidth: 1.5,
                     fill: true,
@@ -347,8 +43,14 @@
 
     async function loadData() {
         try {
-            const res = await fetch('data.json?t=' + Date.now());
-            const data = await res.json();
+            // 加入快取消除機制，並用 text() 處理無效的 JSON 格式
+            const res = await fetch('data.json?v=' + new Date().getTime());
+            let textData = await res.text();
+            
+            // 強制在前端將 JSON 內殘留的 NaN / nan 替換為安全字串，防止 JSON.parse 報錯
+            textData = textData.replace(/:\s*NaN/g, ': null').replace(/:\s*"nan"/g, ': "--"');
+            
+            const data = JSON.parse(textData);
 
             // 1. 更新頂部時間
             if (data.updated_at) {
@@ -365,12 +67,12 @@
 
             // 2. 渲染頂部/焦點大卡片
             const renderTopCard = (id, item) => {
-                if (!item || item.price === '--') return;
+                if (!item || item.price === '--' || item.price === 'nan') return;
                 document.getElementById(`${id}-price`).innerText = item.price;
-                document.getElementById(`${id}-prev`).innerText = item.prev_close;
+                if(item.prev_close) document.getElementById(`${id}-prev`).innerText = item.prev_close;
                 
                 const weekEl = document.getElementById(`${id}-week`);
-                if (weekEl) {
+                if (weekEl && item.week_pChange) {
                     weekEl.innerText = item.week_pChange;
                     const isUp = item.week_pChange.includes('+');
                     weekEl.className = isUp ? 'red' : 'green';
@@ -383,22 +85,22 @@
 
             // 3. 渲染一般漲跌卡片
             const renderCard = (id, item, forceRed = false) => {
-                if (!item || item.price === '--') return;
+                if (!item || item.price === '--' || item.price === 'nan') return;
                 const priceEl = document.getElementById(`${id}-price`);
                 const changeEl = document.getElementById(`${id}-change`);
                 
                 if (priceEl) {
                     priceEl.innerText = item.price;
-                    const isUp = item.raw_change > 0;
+                    const isUp = (item.raw_change || 0) > 0;
                     const colorClass = forceRed ? 'red' : (isUp ? 'red' : 'green');
                     priceEl.className = `${priceEl.className.replace(/red|green/g, '')} ${colorClass}`;
                 }
 
-                if (changeEl) {
-                    const isUp = item.raw_change > 0;
+                if (changeEl && item.change) {
+                    const isUp = (item.raw_change || 0) > 0;
                     const colorClass = forceRed ? 'red' : (isUp ? 'red' : 'green');
                     const arrow = (isUp || forceRed) ? '▲' : '▼';
-                    changeEl.innerText = `${arrow} ${Math.abs(item.change)} (${item.pChange})`;
+                    changeEl.innerText = `${arrow} ${String(item.change).replace(/[+-]/g, '')} (${item.pChange || ''})`;
                     changeEl.className = `${changeEl.className.replace(/red|green/g, '')} ${colorClass}`;
                 }
             };
@@ -453,21 +155,21 @@
 
             // 8. 折線圖渲染
             if (data.charts) {
-                renderDetailChart('chart-twii', data.charts.twii, data.twii?.raw_change >= 0 ? '#ef4444' : '#00e676');
-                renderDetailChart('chart-fitx', data.charts.twii, data.fitx?.raw_change >= 0 ? '#ef4444' : '#00e676');
-                renderDetailChart('chart-tsmc', data.charts.tsmc, data.tsmc?.raw_change >= 0 ? '#ef4444' : '#00e676');
-                renderDetailChart('chart-etf6208', data.charts.etf6208, data.etf6208?.raw_change >= 0 ? '#ef4444' : '#00e676');
+                renderDetailChart('chart-twii', data.charts.twii, (data.twii?.raw_change || 0) >= 0 ? '#ef4444' : '#00e676');
+                renderDetailChart('chart-fitx', data.charts.twii, (data.fitx?.raw_change || 0) >= 0 ? '#ef4444' : '#00e676');
+                renderDetailChart('chart-tsmc', data.charts.tsmc, (data.tsmc?.raw_change || 0) >= 0 ? '#ef4444' : '#00e676');
+                renderDetailChart('chart-etf6208', data.charts.etf6208, (data.etf6208?.raw_change || 0) >= 0 ? '#ef4444' : '#00e676');
                 
                 if (data.charts.twd) {
                     renderDetailChart('twdCanvas', data.charts.twd, '#eab308');
                 }
                 if (data.charts.brent) {
-                    renderDetailChart('brentCanvas', data.charts.brent, data.brent?.raw_change >= 0 ? '#ef4444' : '#00e676');
+                    renderDetailChart('brentCanvas', data.charts.brent, (data.brent?.raw_change || 0) >= 0 ? '#ef4444' : '#00e676');
                 }
             }
 
         } catch (e) {
-            console.error("同步失敗:", e);
+            console.error("解析與同步失敗:", e);
         }
     }
 
@@ -477,5 +179,3 @@
 
     loadData();
 </script>
-</body>
-</html>
