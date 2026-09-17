@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-17 00:53:11",
+  "updated_at": "2026-09-17 00:55:09",
   "twii": {
     "price": "45,511.49",
     "change": "-351.03",
@@ -71,18 +71,18 @@
   "usdtwd": {
     "price": "31.86",
     "change": "+0.08",
-    "pChange": "+0.26%",
-    "week_pChange": "+0.26%",
+    "pChange": "+0.27%",
+    "week_pChange": "+0.27%",
     "prev_close": "31.77",
-    "raw_change": 0.08360099792480469
+    "raw_change": 0.08460044860839844
   },
   "brent": {
-    "price": "104.75",
-    "change": "-4.00",
-    "pChange": "-3.68%",
-    "week_pChange": "-3.68%",
+    "price": "104.72",
+    "change": "-4.03",
+    "pChange": "-3.71%",
+    "week_pChange": "-3.71%",
     "prev_close": "108.75",
-    "raw_change": -4.0
+    "raw_change": -4.029998779296875
   },
   "bond": {
     "price": "5.01",
@@ -336,7 +336,7 @@
       },
       {
         "time": "09/16",
-        "price": 104.75
+        "price": 104.72
       }
     ],
     "bond": [
