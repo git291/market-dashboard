@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-16 23:59:57",
+  "updated_at": "2026-09-17 00:43:34",
   "twii": {
     "price": "45,511.49",
     "change": "-351.03",
@@ -69,20 +69,20 @@
     "prev": "17.20"
   },
   "usdtwd": {
-    "price": "31.83",
-    "change": "+0.06",
-    "pChange": "+0.18%",
-    "week_pChange": "+0.18%",
+    "price": "31.86",
+    "change": "+0.08",
+    "pChange": "+0.27%",
+    "week_pChange": "+0.27%",
     "prev_close": "31.77",
-    "raw_change": 0.05860137939453125
+    "raw_change": 0.08460044860839844
   },
   "brent": {
-    "price": "105.20",
-    "change": "-3.55",
-    "pChange": "-3.26%",
-    "week_pChange": "-3.26%",
+    "price": "104.85",
+    "change": "-3.90",
+    "pChange": "-3.59%",
+    "week_pChange": "-3.59%",
     "prev_close": "108.75",
-    "raw_change": -3.5500030517578125
+    "raw_change": -3.9000015258789062
   },
   "bond": {
     "price": "5.01",
@@ -97,21 +97,21 @@
   },
   "margin_data": [
     {
-      "date": "09/16",
+      "date": "09/17",
       "margin_buy_sell": "-12.5億",
       "short_buy_sell": "+1,200",
       "margin_balance": "2,650億",
       "short_balance": "32.5萬"
     },
     {
-      "date": "09/15",
+      "date": "09/16",
       "margin_buy_sell": "+18.3億",
       "short_buy_sell": "-850",
       "margin_balance": "2,662億",
       "short_balance": "32.3萬"
     },
     {
-      "date": "09/14",
+      "date": "09/15",
       "margin_buy_sell": "+5.2億",
       "short_buy_sell": "+3,100",
       "margin_balance": "2,644億",
@@ -314,7 +314,7 @@
       },
       {
         "time": "09/17",
-        "price": 31.83
+        "price": 31.86
       }
     ],
     "brent": [
@@ -336,7 +336,7 @@
       },
       {
         "time": "09/16",
-        "price": 105.2
+        "price": 104.85
       }
     ],
     "bond": [
@@ -380,7 +380,7 @@
       },
       {
         "time": "09/17",
-        "price": 31.83
+        "price": 31.86
       }
     ]
   }
