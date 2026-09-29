@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-29 06:21:29",
+  "updated_at": "2026-09-29 13:09:34",
   "twii": {
     "price": "47,631.96",
     "change": "-392.64",
@@ -55,40 +55,40 @@
     "raw_change": -203.689453125
   },
   "vix": {
-    "price": "16.07",
-    "change": "+1.20",
-    "pChange": "+8.07%",
-    "week_pChange": "+8.07%",
-    "prev_close": "14.87",
-    "raw_change": 1.1999998092651367,
-    "open": "16.16",
-    "high": "16.62",
-    "low": "15.68",
-    "prev": "14.87"
+    "price": "15.89",
+    "change": "-0.18",
+    "pChange": "-1.12%",
+    "week_pChange": "-1.12%",
+    "prev_close": "16.07",
+    "raw_change": -0.17999935150146484,
+    "open": "16.17",
+    "high": "16.19",
+    "low": "15.73",
+    "prev": "16.07"
   },
   "usdtwd": {
     "price": "31.81",
-    "change": "+0.04",
-    "pChange": "+0.11%",
-    "week_pChange": "+0.11%",
+    "change": "+0.03",
+    "pChange": "+0.10%",
+    "week_pChange": "+0.10%",
     "prev_close": "31.78",
-    "raw_change": 0.03529930114746094
+    "raw_change": 0.03230094909667969
   },
   "brent": {
-    "price": "99.36",
-    "change": "-5.92",
-    "pChange": "-5.62%",
-    "week_pChange": "-5.62%",
+    "price": "96.15",
+    "change": "-9.13",
+    "pChange": "-8.67%",
+    "week_pChange": "-8.67%",
     "prev_close": "105.28",
-    "raw_change": -5.9199981689453125
+    "raw_change": -9.129997253417969
   },
   "bond": {
-    "price": "5.24",
-    "change": "+0.06",
-    "pChange": "+1.08%",
-    "week_pChange": "+1.08%",
-    "prev_close": "5.18",
-    "raw_change": 0.055999755859375
+    "price": "5.22",
+    "change": "-0.02",
+    "pChange": "-0.31%",
+    "week_pChange": "-0.31%",
+    "prev_close": "5.24",
+    "raw_change": -0.015999794006347656
   },
   "fear": {
     "score": "38"
@@ -251,10 +251,6 @@
     ],
     "vix": [
       {
-        "time": "09/22",
-        "price": 14.21
-      },
-      {
         "time": "09/23",
         "price": 15.18
       },
@@ -269,6 +265,10 @@
       {
         "time": "09/28",
         "price": 16.07
+      },
+      {
+        "time": "09/29",
+        "price": 15.89
       }
     ],
     "usdtwd": [
@@ -312,14 +312,10 @@
       },
       {
         "time": "09/29",
-        "price": 99.36
+        "price": 96.15
       }
     ],
     "bond": [
-      {
-        "time": "09/22",
-        "price": 4.97
-      },
       {
         "time": "09/23",
         "price": 5.11
@@ -335,6 +331,10 @@
       {
         "time": "09/28",
         "price": 5.24
+      },
+      {
+        "time": "09/29",
+        "price": 5.22
       }
     ],
     "fitx": [
