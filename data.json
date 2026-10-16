@@ -1,28 +1,28 @@
 {
-  "updated_at": "2026-10-16 05:14:16",
+  "updated_at": "2026-10-16 09:48:47",
   "twii": {
-    "price": "47,309.46",
-    "change": "+339.59",
-    "pChange": "+0.72%",
-    "week_pChange": "+0.72%",
+    "price": "47,111.26",
+    "change": "+141.39",
+    "pChange": "+0.30%",
+    "week_pChange": "+0.30%",
     "prev_close": "46,969.87",
-    "raw_change": 339.58984375
+    "raw_change": 141.390625
   },
   "tsmc": {
-    "price": "2,435.00",
-    "change": "-5.00",
-    "pChange": "-0.20%",
-    "week_pChange": "-0.20%",
+    "price": "2,420.00",
+    "change": "-20.00",
+    "pChange": "-0.82%",
+    "week_pChange": "-0.82%",
     "prev_close": "2,440.00",
-    "raw_change": -5.0
+    "raw_change": -20.0
   },
   "etf6208": {
-    "price": "250.85",
-    "change": "-7.85",
-    "pChange": "-3.03%",
-    "week_pChange": "-3.03%",
+    "price": "250.35",
+    "change": "-8.35",
+    "pChange": "-3.23%",
+    "week_pChange": "-3.23%",
     "prev_close": "258.70",
-    "raw_change": -7.850006103515625
+    "raw_change": -8.350006103515625
   },
   "fitx": {
     "price": "--",
@@ -55,32 +55,32 @@
     "raw_change": -103.169921875
   },
   "vix": {
-    "price": "16.46",
-    "change": "-0.41",
-    "pChange": "-2.43%",
-    "week_pChange": "-2.43%",
-    "prev_close": "16.87",
-    "raw_change": -0.4100017547607422,
-    "open": "17.55",
-    "high": "18.01",
-    "low": "16.34",
-    "prev": "16.87"
+    "price": "16.00",
+    "change": "-0.46",
+    "pChange": "-2.79%",
+    "week_pChange": "-2.79%",
+    "prev_close": "16.46",
+    "raw_change": -0.45999908447265625,
+    "open": "16.02",
+    "high": "16.08",
+    "low": "15.97",
+    "prev": "16.46"
   },
   "usdtwd": {
-    "price": "32.19",
-    "change": "+0.08",
-    "pChange": "+0.26%",
-    "week_pChange": "+0.26%",
-    "prev_close": "32.10",
-    "raw_change": 0.08489990234375
+    "price": "32.35",
+    "change": "+0.16",
+    "pChange": "+0.50%",
+    "week_pChange": "+0.50%",
+    "prev_close": "32.19",
+    "raw_change": 0.16210174560546875
   },
   "brent": {
-    "price": "105.34",
-    "change": "-0.58",
-    "pChange": "-0.55%",
-    "week_pChange": "-0.55%",
+    "price": "105.08",
+    "change": "-0.84",
+    "pChange": "-0.79%",
+    "week_pChange": "-0.79%",
     "prev_close": "105.92",
-    "raw_change": -0.5800018310546875
+    "raw_change": -0.839996337890625
   },
   "bond": {
     "price": "5.09",
@@ -136,7 +136,7 @@
       },
       {
         "time": "10/16",
-        "price": 47309.46
+        "price": 47111.26
       }
     ],
     "tsmc": [
@@ -158,7 +158,7 @@
       },
       {
         "time": "10/16",
-        "price": 2435.0
+        "price": 2420.0
       }
     ],
     "etf6208": [
@@ -180,7 +180,7 @@
       },
       {
         "time": "10/16",
-        "price": 250.85
+        "price": 250.35
       }
     ],
     "dji": [
@@ -251,10 +251,6 @@
     ],
     "vix": [
       {
-        "time": "10/09",
-        "price": 14.84
-      },
-      {
         "time": "10/12",
         "price": 15.21
       },
@@ -269,13 +265,13 @@
       {
         "time": "10/15",
         "price": 16.46
+      },
+      {
+        "time": "10/16",
+        "price": 16.0
       }
     ],
     "usdtwd": [
-      {
-        "time": "10/09",
-        "price": 31.93
-      },
       {
         "time": "10/12",
         "price": 31.92
@@ -291,6 +287,10 @@
       {
         "time": "10/15",
         "price": 32.19
+      },
+      {
+        "time": "10/16",
+        "price": 32.35
       }
     ],
     "brent": [
@@ -312,7 +312,7 @@
       },
       {
         "time": "10/16",
-        "price": 105.34
+        "price": 105.08
       }
     ],
     "bond": [
@@ -356,14 +356,10 @@
       },
       {
         "time": "10/16",
-        "price": 47309.46
+        "price": 47111.26
       }
     ],
     "twd": [
-      {
-        "time": "10/09",
-        "price": 31.93
-      },
       {
         "time": "10/12",
         "price": 31.92
@@ -379,6 +375,10 @@
       {
         "time": "10/15",
         "price": 32.19
+      },
+      {
+        "time": "10/16",
+        "price": 32.35
       }
     ]
   }
