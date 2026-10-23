@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-22 10:37:30",
+  "updated_at": "2026-10-23 05:31:25",
   "twii": {
     "price": "46,041.43",
     "change": "-846.34",
@@ -17,12 +17,12 @@
     "raw_change": -35.0
   },
   "etf6208": {
-    "price": "244.85",
-    "change": "-2.75",
-    "pChange": "-1.11%",
-    "week_pChange": "-1.11%",
-    "prev_close": "247.60",
-    "raw_change": -2.75
+    "price": "247.60",
+    "change": "+2.30",
+    "pChange": "+0.94%",
+    "week_pChange": "+0.94%",
+    "prev_close": "245.30",
+    "raw_change": 2.3000030517578125
   },
   "fitx": {
     "price": "--",
@@ -31,85 +31,85 @@
     "raw_change": 0
   },
   "dji": {
-    "price": "52,856.09",
-    "change": "+360.21",
-    "pChange": "+0.69%",
-    "week_pChange": "+0.69%",
-    "prev_close": "52,495.88",
-    "raw_change": 360.2109375
+    "price": "52,867.98",
+    "change": "+11.89",
+    "pChange": "+0.02%",
+    "week_pChange": "+0.02%",
+    "prev_close": "52,856.09",
+    "raw_change": 11.890625
   },
   "ixic": {
-    "price": "26,702.86",
-    "change": "+278.04",
-    "pChange": "+1.05%",
-    "week_pChange": "+1.05%",
-    "prev_close": "26,424.82",
-    "raw_change": 278.0390625
+    "price": "26,008.86",
+    "change": "-694.00",
+    "pChange": "-2.60%",
+    "week_pChange": "-2.60%",
+    "prev_close": "26,702.86",
+    "raw_change": -694.0
   },
   "sox": {
-    "price": "11,505.56",
-    "change": "+221.75",
-    "pChange": "+1.97%",
-    "week_pChange": "+1.97%",
-    "prev_close": "11,283.81",
-    "raw_change": 221.75
+    "price": "10,731.98",
+    "change": "-773.58",
+    "pChange": "-6.72%",
+    "week_pChange": "-6.72%",
+    "prev_close": "11,505.56",
+    "raw_change": -773.5791015625
   },
   "vix": {
-    "price": "18.36",
-    "change": "+1.68",
-    "pChange": "+10.07%",
-    "week_pChange": "+10.07%",
+    "price": "19.03",
+    "change": "+2.35",
+    "pChange": "+14.09%",
+    "week_pChange": "+14.09%",
     "prev_close": "16.68",
-    "raw_change": 1.6800003051757812,
+    "raw_change": 2.3500003814697266,
     "open": "18.29",
-    "high": "18.58",
-    "low": "18.18",
+    "high": "20.31",
+    "low": "17.71",
     "prev": "16.68"
   },
   "usdtwd": {
-    "price": "32.53",
-    "change": "-0.05",
-    "pChange": "-0.16%",
-    "week_pChange": "-0.16%",
-    "prev_close": "32.58",
-    "raw_change": -0.0525970458984375
+    "price": "32.62",
+    "change": "+0.25",
+    "pChange": "+0.77%",
+    "week_pChange": "+0.77%",
+    "prev_close": "32.37",
+    "raw_change": 0.24910354614257812
   },
   "brent": {
-    "price": "111.59",
-    "change": "+2.77",
-    "pChange": "+2.55%",
-    "week_pChange": "+2.55%",
-    "prev_close": "108.82",
-    "raw_change": 2.7699966430664062
+    "price": "113.96",
+    "change": "+0.79",
+    "pChange": "+0.70%",
+    "week_pChange": "+0.70%",
+    "prev_close": "113.17",
+    "raw_change": 0.7900009155273438
   },
   "bond": {
-    "price": "5.15",
-    "change": "+0.03",
-    "pChange": "+0.57%",
-    "week_pChange": "+0.57%",
-    "prev_close": "5.12",
-    "raw_change": 0.028999805450439453
+    "price": "4.95",
+    "change": "-0.19",
+    "pChange": "-3.75%",
+    "week_pChange": "-3.75%",
+    "prev_close": "5.15",
+    "raw_change": -0.19299983978271484
   },
   "fear": {
     "score": "38"
   },
   "margin_data": [
     {
-      "date": "10/22",
+      "date": "10/23",
       "margin_buy_sell": "-12.5億",
       "short_buy_sell": "+1,200",
       "margin_balance": "2,650億",
       "short_balance": "32.5萬"
     },
     {
-      "date": "10/21",
+      "date": "10/22",
       "margin_buy_sell": "+18.3億",
       "short_buy_sell": "-850",
       "margin_balance": "2,662億",
       "short_balance": "32.3萬"
     },
     {
-      "date": "10/20",
+      "date": "10/21",
       "margin_buy_sell": "+5.2億",
       "short_buy_sell": "+3,100",
       "margin_balance": "2,644億",
@@ -163,6 +163,10 @@
     ],
     "etf6208": [
       {
+        "time": "10/15",
+        "price": 250.1
+      },
+      {
         "time": "10/16",
         "price": 250.35
       },
@@ -177,17 +181,9 @@
       {
         "time": "10/21",
         "price": 247.6
-      },
-      {
-        "time": "10/22",
-        "price": 244.85
       }
     ],
     "dji": [
-      {
-        "time": "10/15",
-        "price": 52177.69
-      },
       {
         "time": "10/16",
         "price": 52002.41
@@ -203,13 +199,13 @@
       {
         "time": "10/21",
         "price": 52856.09
+      },
+      {
+        "time": "10/22",
+        "price": 52867.98
       }
     ],
     "ixic": [
-      {
-        "time": "10/15",
-        "price": 26713.03
-      },
       {
         "time": "10/16",
         "price": 26140.03
@@ -225,13 +221,13 @@
       {
         "time": "10/21",
         "price": 26702.86
+      },
+      {
+        "time": "10/22",
+        "price": 26008.86
       }
     ],
     "sox": [
-      {
-        "time": "10/15",
-        "price": 11581.21
-      },
       {
         "time": "10/16",
         "price": 11137.29
@@ -247,6 +243,10 @@
       {
         "time": "10/21",
         "price": 11505.56
+      },
+      {
+        "time": "10/22",
+        "price": 10731.98
       }
     ],
     "vix": [
@@ -268,14 +268,10 @@
       },
       {
         "time": "10/22",
-        "price": 18.36
+        "price": 19.03
       }
     ],
     "usdtwd": [
-      {
-        "time": "10/16",
-        "price": 32.33
-      },
       {
         "time": "10/19",
         "price": 32.39
@@ -290,14 +286,14 @@
       },
       {
         "time": "10/22",
-        "price": 32.53
+        "price": 32.37
+      },
+      {
+        "time": "10/23",
+        "price": 32.62
       }
     ],
     "brent": [
-      {
-        "time": "10/16",
-        "price": 109.86
-      },
       {
         "time": "10/19",
         "price": 109.55
@@ -312,14 +308,14 @@
       },
       {
         "time": "10/22",
-        "price": 111.59
+        "price": 113.17
+      },
+      {
+        "time": "10/23",
+        "price": 113.96
       }
     ],
     "bond": [
-      {
-        "time": "10/15",
-        "price": 5.09
-      },
       {
         "time": "10/16",
         "price": 5.1
@@ -335,6 +331,10 @@
       {
         "time": "10/21",
         "price": 5.15
+      },
+      {
+        "time": "10/22",
+        "price": 4.95
       }
     ],
     "fitx": [
@@ -361,10 +361,6 @@
     ],
     "twd": [
       {
-        "time": "10/16",
-        "price": 32.33
-      },
-      {
         "time": "10/19",
         "price": 32.39
       },
@@ -378,7 +374,11 @@
       },
       {
         "time": "10/22",
-        "price": 32.53
+        "price": 32.37
+      },
+      {
+        "time": "10/23",
+        "price": 32.62
       }
     ]
   }
